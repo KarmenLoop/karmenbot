@@ -63,7 +63,7 @@ When the diff appears, press `y`. The file is written then.
 
 One job without the screen: `karmenbot "Turn these notes into three conclusions"`.
 
-The hand-holding path, from install through a saved file and every chat app, is [docs/GUIDE.md](docs/GUIDE.md). Screens and keys: [docs/TUI.md](docs/TUI.md). Per-system chapters in Chinese: [macOS](docs/教程-macOS.md), [Windows](docs/教程-Windows.md), [Linux](docs/教程-Linux.md).
+The hand-holding path, from install through a saved file and every chat app, is [docs/GUIDE.md](docs/GUIDE.md). Screens and keys: [docs/TUI.md](docs/TUI.md).
 
 ## Kernel
 

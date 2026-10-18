@@ -151,7 +151,7 @@ cd ~/Documents
 karmenbot
 ```
 
-The opening plays: glass ring, KARMEN, five real steps. A key pressed during it is kept. The first line of the conversation is 「你好，我是 Karmen —— 一块会干活的玻璃。」
+The opening plays: glass ring, KARMEN, five real steps. A key pressed during it is kept. The first line of the conversation introduces Karmen in the language selected in settings.
 
 Type a job and press Enter. `Ctrl+J` inserts a line break without sending.
 
@@ -268,7 +268,7 @@ Scan flows that record an owner do not ask for a code. Every other app does. Sen
 
 In the chat:
 
-- The reply words are exactly `批准`, `是`, `y`, or `n`, `否`, `拒绝`. A longer sentence is not an approval.
+- The reply is one of the short accept or reject words shown on that screen, including `y` and `n`. A longer sentence is not an approval.
 - No reply for 5 minutes is a rejection.
 - In a group, the message must mention the bot.
 - `/new`, `/stop`, `/status`, `/help` work in the chat.
@@ -277,7 +277,7 @@ A write in chat sends a diff. A command sends the command text. The file lands i
 
 ## 8. Language, site, and leaving
 
-**Language and display** switches 中文 and English, auto-approve, and the sidebar. The choice is saved.
+**Language and display** switches between Chinese and English, auto-approve, and the sidebar. The choice is saved.
 
 **Official site** opens [karmenloop.com](https://karmenloop.com), opens the updates page, and checks this copy against `latest.json` on the download address. The check sends no account and no key. If the download address does not answer, use [the updates page](https://karmenloop.com/updates.html).
 
@@ -285,4 +285,4 @@ A write in chat sends a diff. A command sends the command text. The file lands i
 
 Quit the screen with `/exit`, or press `Ctrl+C` twice when the input line is empty. The terminal cursor and mouse come back.
 
-Per-system chapters inside the program are in Chinese: `karmenbot learn`, or [macOS](教程-macOS.md), [Windows](教程-Windows.md), [Linux](教程-Linux.md).
+`karmenbot learn` prints the chapter for this system.

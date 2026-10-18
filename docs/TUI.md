@@ -24,7 +24,7 @@ karmenbot --version
 
 A version number means the command is on `PATH`. Then run `karmenbot`.
 
-Paths, login startup, and uninstall differ by system. Those chapters are in Chinese: [macOS](教程-macOS.md), [Windows](教程-Windows.md), [Linux](教程-Linux.md). Inside the program, `karmenbot learn` prints the chapter for the system you are on.
+Paths, login startup, and uninstall differ by system. On macOS the command lives in `~/.local/bin` and settings live in `~/.karmenbot`. On Linux the same paths are used. On Windows 10 and 11 the install is under `%USERPROFILE%\.karmenbot` and the command is on your user PATH. Inside the program, `karmenbot learn` prints the chapter for the system you are on.
 
 ## 2. Opening
 
@@ -39,7 +39,7 @@ The glass ring and the word KARMEN appear first. The steps on screen are real: p
 Three regions:
 
 - **Left:** session, workspace, model, mode, multi-model review, usage, files already written. A narrow window drops this column.
-- **Center:** the conversation. The first line is “你好，我是 Karmen —— 一块会干活的玻璃。”
+- **Center:** the conversation. The first line introduces Karmen in the language selected in settings.
 - **Bottom:** the input line. Enter sends.
 
 Reading proceeds on its own. A file write opens a diff. A command shows the full line. `y` accepts. `n` or `Esc` rejects. Until you accept, the file on disk stays as it was and the command does not run.
