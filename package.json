@@ -1,0 +1,19 @@
+{
+  "name": "karmenbot",
+  "version": "0.1.0",
+  "description": "karmenbot: a portable personal assistant for the terminal and your chat apps, on the Koder kernel",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "karmenbot": "bin/karmenbot.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-timeout=60000 test/*.test.mjs",
+    "fetch-kernel": "node scripts/fetch-kernel.mjs",
+    "release": "node scripts/build-release.mjs"
+  }
+}
