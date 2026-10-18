@@ -4,7 +4,8 @@ KARMEN in the terminal. You state the work. It reads files, writes documents, or
 
 - Site: [karmenloop.com](https://karmenloop.com)
 - Email: [info@karmenloop.com](mailto:info@karmenloop.com)
-- Screen and walkthrough: [docs/TUI.md](docs/TUI.md)
+- Brand, install, model, first job, and chat apps: [docs/GUIDE.md](docs/GUIDE.md)
+- Screen reference: [docs/TUI.md](docs/TUI.md)
 
 ![Splash](docs/media/01-splash.png)
 
@@ -21,6 +22,10 @@ KARMEN in the terminal. You state the work. It reads files, writes documents, or
 macOS 12 or later, Windows 10 / 11, Linux with glibc 2.28 or later. If Node.js 22 is missing, the installer brings its own. Windows 7, Windows 8, and XP are not supported.
 
 After install, the settings screen opens. Open a new terminal and run `karmenbot`.
+
+## Brand
+
+KARMEN is the brand on [karmenloop.com](https://karmenloop.com). Koder is the desktop editor and its terminal. KARMEN BOT, on the site, is for one person: it acts with your permission, and payment, promises, and orders wait for you. The phone app is not available for download. karmenbot is the full-screen terminal in that family. The kernel is not in this repository.
 
 ## Product
 
@@ -58,7 +63,7 @@ When the diff appears, press `y`. The file is written then.
 
 One job without the screen: `karmenbot "Turn these notes into three conclusions"`.
 
-Screens, keys, and the walkthrough: [docs/TUI.md](docs/TUI.md). Per-system tutorials, in Chinese, are in [docs/教程-macOS.md](docs/教程-macOS.md), [docs/教程-Windows.md](docs/教程-Windows.md), and [docs/教程-Linux.md](docs/教程-Linux.md).
+The hand-holding path, from install through a saved file and every chat app, is [docs/GUIDE.md](docs/GUIDE.md). Screens and keys: [docs/TUI.md](docs/TUI.md). Per-system chapters in Chinese: [macOS](docs/教程-macOS.md), [Windows](docs/教程-Windows.md), [Linux](docs/教程-Linux.md).
 
 ## Kernel
 
