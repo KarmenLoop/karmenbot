@@ -9,7 +9,7 @@ const LOGO = 28;
 export function bannerAnsi({ depth = "truecolor", wide = true, version = "", tagline = "一句话进来，一件事办妥" } = {}) {
   const paint = (spans) => (depth === "none" ? spans.map((item) => item.text ?? "").join("") : toAnsi(spans, depth));
   const words = wordmarkSpans().map(paint);
-  const title = paint([...gradient(`KARMENBOT ${version}`.trim(), { bold: true, from: 0.55 }), sp("  ·  随身折光助理", { fg: C.dim })]);
+  const title = paint([...gradient(`KARMENBOT ${version}`.trim(), { bold: true, from: 0.55 }), sp("  ·  karmenloop.com", { fg: C.dim })]);
   const slogan = paint(gradient(tagline, { from: 0.45, bold: true }));
   const ring = logoLines({ size: wide ? LOGO : 22, depth });
   if (wide) {

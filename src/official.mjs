@@ -52,7 +52,7 @@ export function identityText(lang = "zh") {
     ].join("\n");
   }
   return [
-    "karmenbot 由 KARMEN / Koder 出品，是装在你电脑上的个人助理。官网：https://karmenloop.com",
+    "karmenbot 由 KARMEN / Koder 出品。官网：https://karmenloop.com",
     "官网对 KARMEN BOT 的介绍：只为你一个人服务的个人助手；经你授权才办事；付款、做出承诺、提交订单之前，一定先交给你确认。它不是企业客服，也不是第二个任务列表。",
     "官网同时写明：手机版尚未提供下载。",
     "产品介绍：https://karmenloop.com/karmen-bot.html",

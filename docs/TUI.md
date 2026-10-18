@@ -1,91 +1,109 @@
-# karmenbot 全屏界面（TUI）
+# 界面与用法
 
-karmenbot 的正文是一个全屏终端界面。打开终端，输入 `karmenbot` 回车，就是它。
+karmenbot 的主界面在终端里全屏运行。下面按实际画面说明它长什么样、怎么往下做。截图来自本程序的界面，不是示意图。
 
-官网：[https://karmenloop.com](https://karmenloop.com)  
-官方邮箱：[info@karmenloop.com](mailto:info@karmenloop.com)  
-仓库：[https://github.com/KarmenLoop/karmenbot](https://github.com/KarmenLoop/karmenbot)
+官网 [karmenloop.com](https://karmenloop.com) · 邮箱 [info@karmenloop.com](mailto:info@karmenloop.com)
 
-## 下载
-
-安装脚本会同时取开源程序和闭源内核，校验 SHA-256 后再装。一行命令：
+## 1. 安装
 
 | 系统 | 命令 |
 |---|---|
 | macOS、Linux | `curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh \| sh` |
-| Windows PowerShell（Windows 10 / 11） | `irm https://karmenloop.com/downloads/karmenbot/install.ps1 \| iex` |
+| Windows PowerShell | `irm https://karmenloop.com/downloads/karmenbot/install.ps1 \| iex` |
 | Windows CMD | `curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd` |
 
-也可以从官网页面进入：
+[下载页](https://karmenloop.com/download.html) · [更新页](https://karmenloop.com/updates.html)
 
-- 下载页：[https://karmenloop.com/download.html](https://karmenloop.com/download.html)
-- 更新页：[https://karmenloop.com/updates.html](https://karmenloop.com/updates.html)
-- 产品页：[https://karmenloop.com/karmen-bot.html](https://karmenloop.com/karmen-bot.html)
+macOS 打开「终端」（`⌘ 空格`，输入「终端」）。Linux 按 `Ctrl+Alt+T`。Windows 10 / 11 打开 PowerShell 或 CMD。把对应那一行粘贴进去，回车。
 
-系统要求：macOS 12 及以上（Intel 与 Apple 芯片），Windows 10 / 11，glibc 2.28 及以上的 Linux。没有 Node.js 22 时，安装脚本会自备一份，不改你系统里原来的 Node。Windows 7、Windows 8 和 XP 不能装。
+装完会进入设置中心。若提示新开一个终端，关掉当前窗口再开一个，输入：
 
-装完会打开设置中心。新开一个终端后，`karmenbot --version` 能打出版本号即表示命令已在 PATH 里。
+```bash
+karmenbot --version
+```
 
-## 打开之后看见什么
+看到版本号后，输入 `karmenbot` 进入界面。各系统的路径、开机自启和卸载，分别写在 [macOS](教程-macOS.md)、[Windows](教程-Windows.md)、[Linux](教程-Linux.md)。
 
-先是折光体标志和「KARMEN」字样，安装框式的开屏会按真实步骤走完：准备界面、读取配置、连接模型、恢复会话、就绪。开屏期间按的键不会丢。
+## 2. 开屏
 
-然后是对话页：
+![开屏：折光体与 KARMEN](media/01-splash.png)
 
-- 上方是标题和当前模型。
-- 左侧是会话、工作区、模型、模式、MoA、用量和已经写入的文件。窗口窄时侧栏让位给正文；太小的窗口会请你拉大。
-- 中间是对话。第一句是：「你好，我是 Karmen —— 一块会干活的玻璃。」
-- 底部是输入框。要办的事直接写在这里，回车发送。
+进入时先出现折光体和 KARMEN。开屏按真实步骤走完：准备界面、读取配置、连接模型、恢复会话、就绪。开屏期间按下的键会保留，进入输入框。
 
-读文件它自己做。要写文件或跑命令时，会先弹出修改对比或命令正文，你按 `y` 接受、`n` 或 `Esc` 拒绝。没有你的确认，文件不会被改，命令不会被执行。
+## 3. 对话
 
-## 只用键盘，或用鼠标
+![对话与写入确认](media/02-confirm.png)
 
-方向键移动，回车确认，`Esc` 返回。设置中心和确认弹窗打开时，可以用鼠标点选；这时鼠标用来点按钮，想复制屏幕上的字，先关掉弹窗。退出界面后，鼠标协议会关掉，终端恢复原样，光标重新出现。
+画面分三块：
 
-第一次运行、还没有模型时，会直接进入设置中心。之后随时：
+- **左侧**：会话、工作区、模型、模式、多模型会商、用量、已写入的文件。窗口变窄时侧栏收起。
+- **中间**：对话。开头一句是「你好，我是 Karmen —— 一块会干活的玻璃。」
+- **底部**：输入框。写完按回车。
 
-- 界面里输入 `/设置` 回车
-- 或在终端运行 `karmenbot settings`
+读文件直接进行。要写文件时，中间弹出修改前后的差异，底部写着按 `y` 接受、按 `n` 或 `Esc` 拒绝。要跑命令时，同样先展示命令全文。你没有接受，磁盘上的文件不变，命令不执行。
 
-设置中心里可以完成这些事，不需要记命令：
+示例：
 
-1. 选模型厂商，粘贴密钥（输入时以掩码显示），保存并测试。换模型后当前会话立刻改用新模型。
-2. 配多模型会商（MoA）：几个模型先出主意，一个模型汇总后再动手。
-3. 接入聊天平台。飞书、企业微信、钉钉、个人微信可以扫码；Telegram、Slack、Discord、WhatsApp 按表单填写。
-4. 启动后台网关、开机自启、批准配对码。删除和撤回需要连按两次。
-5. 按你的系统阅读教程：macOS、Windows、Linux 各一套，命令和按键互不相同。
-6. 打开官网、打开更新页、检查有没有新版本。
+```text
+把这份会议纪要收成三条结论，写进结论.md
+```
 
-## 界面里的命令
+差异里的路径和正文核对过后，按 `y`。
 
-在输入框以 `/` 开头。`Tab` 补全，方向键在列表里移动。
+侧栏里的「自动确认」默认关闭。只在你明确打开之后，文件和命令才不再逐条询问。
+
+## 4. 设置中心
+
+![设置中心](media/03-settings.png)
+
+第一次还没有模型时，设置中心自动打开。之后在输入框写 `/设置` 回车，或在终端运行 `karmenbot settings`。
+
+方向键移动，回车进入，`Esc` 返回。这一页和确认弹窗打开时，可以用鼠标点选。退出界面后，终端恢复原来的鼠标和光标。
+
+建议第一次按这个顺序：
+
+1. **模型。** 回车进入，输入厂商名字过滤，例如 `deepseek`。选中后粘贴密钥。密钥显示为圆点。选「保存并测试」，测试通过再返回。换好的模型立刻用于当前会话。
+2. **多模型会商。** 勾选参与的模型，指定负责汇总的那一个，打开开关。若干模型先分别给出看法，再由汇总的模型动手。
+3. **聊天软件。** 飞书、企业微信、钉钉、个人微信走扫码。Telegram、Slack、Discord、WhatsApp 按页面上的字段填写。
+4. **后台。** 启动后，聊天消息才会送到这台电脑。开机自启在同一页。配对请求在这一页批准；撤回和删除需要连按两次。
+5. **教程。** 先选 macOS、Windows 或 Linux，再点章节。三套教程的命令和按键各不相同。
+6. **官网与更新。** 打开 [karmenloop.com](https://karmenloop.com)、打开更新页，或检查当前版本是否与官网记录一致。
+
+![添加模型](media/04-model.png)
+
+![个人微信扫码](media/05-weixin.png)
+
+## 5. 界面命令
+
+在输入框以 `/` 开头。`Tab` 补全。
 
 | 输入 | 作用 |
 |---|---|
 | `/设置` | 设置中心 |
-| `/官网` | 按官网介绍出品方，并检查更新 |
+| `/官网` | 官网介绍与更新检查 |
 | `/help` | 命令和按键 |
 | `/learn` | 短教程 |
-| `/moa on` | 打开多模型会商 |
+| `/moa on` / `/moa off` | 多模型会商 |
 | `/model` | 查看或切换模型 |
-| `/lang zh` 或 `/lang en` | 界面语言，选择会保存 |
+| `/lang zh` / `/lang en` | 界面语言，选择会保存 |
 | `/new` | 新会话 |
 | `/banner` | 重播开屏 |
 | `/exit` | 退出 |
 
-问「这个工具是谁开发的」或 “who made this” 时，界面、单次任务和已接入的聊天软件都会按官网介绍 KARMEN / Koder，并给出官网与官方邮箱，不另编一家公司。
+问「这个工具是谁开发的」时，回答来自官网：KARMEN / Koder 出品，只为你一个人服务；付款、承诺和提交订单之前先交给你确认；手机版尚未提供下载。并给出官网 [karmenloop.com](https://karmenloop.com) 与邮箱 [info@karmenloop.com](mailto:info@karmenloop.com)。
 
-## 不开界面的时候
+## 6. 不开界面
 
-`karmenbot "把这份纪要收成三条结论"` 在当前目录直接办事，适合脚本和管道。确认规则相同：不加 `--yes` 时，写文件和跑命令仍要你点头。
+当前目录下直接办一件事：
 
-`karmenbot doctor` 检查 Node、内核、模型、聊天平台，并打印官网和更新页。`karmenbot 官网` 打印介绍并对照官网的版本记录。
+```bash
+karmenbot "把这份纪要收成三条结论"
+```
 
-## 协议
+确认规则与全屏界面相同。`karmenbot doctor` 检查运行环境、内核、模型和已接入的聊天软件，并打印官网与更新页。
 
-本仓库的界面、设置中心、安装脚本、教程和测试，使用 **GNU GPL 第 3 版、仅第 3 版**（`GPL-3.0-only`），与 OpenHuman 相同。全文见 `LICENSE`。
+## 7. 内核
 
-Koder 内核不开源。它随安装包进入 `vendor/`，许可是 `KERNEL-LICENSE.md`：可以免费随 karmenbot 使用，包括商用；不能单独分发、修改或逆向。`LICENSE-EXCEPTION.md` 是 GPL 第 7 条附加许可，允许把本仓库与这份闭源内核组合发布，组合后需要公开的源码不包括内核。
+内核**不公开**，源码不在本仓库。程序安装时从 [官网下载地址](https://karmenloop.com/downloads/karmenbot) 取得内核并校验后放入 `vendor/`。许可是 `KERNEL-LICENSE.md`。
 
-问题与合作请写官方邮箱 [info@karmenloop.com](mailto:info@karmenloop.com)，或看官网 [https://karmenloop.com](https://karmenloop.com)。
+本仓库其余文件使用 GPL-3.0-only，全文见仓库根目录的 `LICENSE`。

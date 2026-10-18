@@ -1,4 +1,4 @@
-const ZH = `karmenbot {version} · 你的随身个人助理
+const ZH = `karmenbot {version}
 
 用法
   karmenbot                       打开全屏界面（折光体开屏、对话、确认弹窗）
@@ -30,7 +30,7 @@ const ZH = `karmenbot {version} · 你的随身个人助理
 
 配置保存在 ~/.karmenbot（KARMENBOT_HOME 可改），密钥文件权限 600。`;
 
-const EN = `karmenbot {version} · your portable personal assistant
+const EN = `karmenbot {version}
 
 Usage
   karmenbot                       open the full-screen interface

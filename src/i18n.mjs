@@ -1,7 +1,7 @@
 const zh = {
   "app.tagline": "一句话进来，一件事办妥",
-  "app.kind": "随身折光助理",
-  "app.subline": "多模型会商 · 改动先问你 · 飞书 / 企业微信 / 微信 / 钉钉随叫随到",
+  "app.kind": "karmenloop.com",
+  "app.subline": "多模型会商 · 改动先问你 · 飞书 / 企业微信 / 微信 / 钉钉",
   "splash.title": "KARMEN · 正在点亮 {version}",
   "splash.kernel": "唤醒内核",
   "splash.kernelDetail": "Koder 内核 · {ms} ms",
@@ -112,7 +112,7 @@ const zh = {
   "gw.stopped": "已停止。",
   "gw.failed": "这一步出错了，详情记在电脑上的 karmenbot 日志里。",
   "gw.unreachable": "暂时连不上模型服务。请在电脑上运行 karmenbot doctor 检查。",
-  "gw.help": "我是 Karmen，你电脑上的个人助理。直接告诉我要做什么；改文件、跑命令前我会先问你。\n/new 新对话 · /stop 停止 · /status 状态 · /help 帮助",
+  "gw.help": "我是 Karmen。直接说要办的事；改文件、跑命令前会先问你。\n/new 新对话 · /stop 停止 · /status 状态 · /help 帮助",
   "gw.status": "模型：{model} · {busy}",
   "gw.busyYes": "正在处理",
   "gw.busyNo": "空闲",
@@ -271,7 +271,7 @@ const zh = {
 
 const en = {
   "app.tagline": "One sentence in, one task done.",
-  "app.kind": "your portable refractor",
+  "app.kind": "karmenloop.com",
   "app.subline": "Models confer · edits ask first · Feishu / WeCom / WeChat / DingTalk on call",
   "splash.title": "KARMEN · lighting up {version}",
   "splash.kernel": "Kernel",
