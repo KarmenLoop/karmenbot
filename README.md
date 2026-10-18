@@ -1,83 +1,118 @@
 # karmenbot
 
-KARMEN in the terminal. You state the work. It reads files, writes documents, organizes material, and runs commands. Before anything is written or executed, the screen shows the exact change and waits.
+Full-screen terminal work, on the computer in front of you.
 
-- Site: [karmenloop.com](https://karmenloop.com)
-- Email: [info@karmenloop.com](mailto:info@karmenloop.com)
-- Brand, install, model, first job, and chat apps: [docs/GUIDE.md](docs/GUIDE.md)
-- Screen reference: [docs/TUI.md](docs/TUI.md)
+From [KARMEN](https://karmenloop.com). You say what the job is. It reads the folder, shows you the change, and waits. Nothing hits disk, and no command runs, until you say yes.
 
-![Splash](docs/media/01-splash.png)
+[Download](https://karmenloop.com/download.html) · [License](#license) · [Platforms](#platforms) · [Docs](#docs) · [Contact](#contact)
 
-## Download
+[Get it](#quick-start) · [Quick start](#quick-start) · [Docs](#docs) · [Contributing](#contributing)
 
-| System | Command |
-|---|---|
-| macOS, Linux | `curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh \| sh` |
-| Windows PowerShell | `irm https://karmenloop.com/downloads/karmenbot/install.ps1 \| iex` |
-| Windows CMD | `curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd` |
+**License.** The code in this repository is [GPL-3.0-only](LICENSE). The Koder kernel is closed. It is not in this repo, and it is not an open-source license. See [License](#license) below.
 
-[Download](https://karmenloop.com/download.html) · [Updates](https://karmenloop.com/updates.html) · [Product](https://karmenloop.com/karmen-bot.html)
+![Opening screen](docs/media/01-splash.png)
 
-macOS 12 or later, Windows 10 / 11, Linux with glibc 2.28 or later. If Node.js 22 is missing, the installer brings its own. Windows 7, Windows 8, and XP are not supported.
+## What it is
 
-After install, the settings screen opens. Open a new terminal and run `karmenbot`.
+karmenbot is KARMEN’s terminal. One person, one machine, the folder you opened. Day to day you just talk to it. For a bigger job it can ask a few models to look first, then one of them does the work. If you want the same thing from Feishu, WeCom, WeChat, DingTalk, Telegram, Slack, Discord, or WhatsApp, you connect that app and leave a small background process running on this computer.
 
-## Brand
+The phone app is not up for download. Payment, a promise, or an order still waits for you. That is the same rule as on the site.
 
-KARMEN is the brand on [karmenloop.com](https://karmenloop.com). Koder is the desktop editor and its terminal. KARMEN BOT, on the site, is for one person: it acts with your permission, and payment, promises, and orders wait for you. The phone app is not available for download. karmenbot is the full-screen terminal in that family. The kernel is not in this repository.
+The walkthrough, from a blank terminal to a file you can open, is [docs/GUIDE.md](docs/GUIDE.md).
 
-## Product
+## What it does
 
-karmenbot runs on this computer. The workspace is the current directory. Settings live in `~/.karmenbot`. The key file is mode 600.
+- **The screen.** A glass-ring open, then the session, the conversation, and a line to type on. Arrows or the mouse. `/settings` is the whole setup.
+- **The folder.** It can read on its own. A write shows the diff. A command shows the exact line. `y` accepts, `n` or `Esc` sends it back.
+- **A model you bring.** Pick the provider, paste the key, test it. The key stays in `~/.karmenbot`, mode 600. Dots on screen, not the key.
+- **A few models on one job.** They each take a look. One of them combines that and actually does the work. Off unless you turn it on.
+- **Chat apps, if you want them.** Scan a code for Feishu, WeCom, DingTalk, and personal WeChat. A short form for Telegram, Slack, Discord, and WhatsApp Business. First contact from anyone else needs your approval on this computer.
+- **A background process.** Start it when chat should keep working after you close the window. Start-at-login is a switch, not a separate installer.
+- **The site, from inside the app.** [karmenloop.com](https://karmenloop.com), the updates page, and a version check. The check does not send your key or your files.
 
-1. **Full-screen terminal.** A glass-ring opening, then a session column, the conversation, and an input line. Keyboard and mouse both work.
-2. **Work in a folder.** Reading proceeds on its own. A file write shows the diff first. A command shows the exact line first. `y` accepts. `n` or `Esc` rejects.
-3. **Several models on one job.** They give separate readings. One model then combines them and acts.
-4. **Chat apps you already use.** Feishu, WeCom, WeChat, DingTalk, Telegram, Slack, Discord, WhatsApp. The first contact waits for approval on this computer.
+## Platforms
 
-The phone app is not available for download. Payment, promises, and submitted orders wait for you.
+macOS 12 or later, Intel or Apple silicon. Windows 10 and 11, in Windows Terminal, PowerShell, or CMD. Linux with glibc 2.28 or later, including Ubuntu 20.04 and newer. No admin password on macOS or Linux.
 
-## Use it
+Windows 7, Windows 8, and XP cannot install it. Node.js 22 does not run there.
+
+## Quick start
+
+### Install
+
+macOS and Linux:
 
 ```bash
+curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell
+irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
+```
+
+Windows CMD:
+
+```bat
+curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
+```
+
+If Node.js 22 is not there, the installer brings a private copy.
+
+When it finishes, Settings opens. Open a new terminal window so `PATH` is current, then:
+
+```bash
+karmenbot --version
 karmenbot
 ```
 
-With no model yet, settings open on their own. Move to Models, press Enter, pick a provider, paste the key, then save and test. The key is shown as dots.
+In Settings, open **Models**, add a provider, paste the key, and choose **Save and test**. Green means you are done with setup. Type a job. When the diff shows up, press `y`.
 
-Back in the conversation, write the job:
+Every click is written out in [docs/GUIDE.md](docs/GUIDE.md), including each chat app if you want one.
 
-```text
-Turn these meeting notes into three conclusions and write them to conclusions.md
-```
+### From source
 
-When the diff appears, press `y`. The file is written then.
-
-| In the screen | In the terminal | Result |
-|---|---|---|
-| `/settings` | `karmenbot settings` | Models, chat apps, background, tutorial, site |
-| `/about` | `karmenbot update` | Who makes it, the site, the email, and an update check |
-| `/learn` | `karmenbot learn` | The tutorial for this system |
-| `/moa on` | `karmenbot moa on` | Several models on one job |
-
-One job without the screen: `karmenbot "Turn these notes into three conclusions"`.
-
-The hand-holding path, from install through a saved file and every chat app, is [docs/GUIDE.md](docs/GUIDE.md). Screens and keys: [docs/TUI.md](docs/TUI.md).
-
-## Kernel
-
-The Koder kernel is **not public**. This repository does not contain it. The installer downloads it from the official site into `vendor/`. Terms are in `KERNEL-LICENSE.md`: use with karmenbot is allowed; separate distribution, modification, and reverse engineering are not.
-
-The screen, installer, tutorials, and tests in this repository are GPL-3.0-only. The full text is `LICENSE`. `LICENSE-EXCEPTION.md` covers shipping this repository together with that kernel.
-
-From source, fetch the kernel, then start:
+For people changing this repo. You still need the kernel from the official site. It is not in the clone.
 
 ```bash
 git clone https://github.com/KarmenLoop/karmenbot.git
 cd karmenbot
 node scripts/fetch-kernel.mjs --from https://karmenloop.com/downloads/karmenbot
+npm test
 node bin/karmenbot.mjs
 ```
 
-Contact: [info@karmenloop.com](mailto:info@karmenloop.com) · [karmenloop.com](https://karmenloop.com)
+Node.js 22 or newer. No npm packages to install.
+
+## Docs
+
+| | |
+|---|---|
+| [Hand-holding guide](docs/GUIDE.md) | Install, the model, the first saved file, then each chat app |
+| [The screen](docs/TUI.md) | What you are looking at, keys, screenshots |
+| [macOS](docs/教程-macOS.md) · [Windows](docs/教程-Windows.md) · [Linux](docs/教程-Linux.md) | The same path, in Chinese, with that system’s keys |
+| [Updates](https://karmenloop.com/updates.html) | What shipped |
+| [Product](https://karmenloop.com/karmen-bot.html) | KARMEN BOT on the site |
+
+Inside the app, `karmenbot learn` prints the Chinese chapters for the system you are on.
+
+## Contributing
+
+Issues and pull requests are welcome. A change to this repository is under GPL-3.0-only, plus the kernel exception in [LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md).
+
+Please don’t paste API keys, bot tokens, or pairing codes into an issue. Mail [info@karmenloop.com](mailto:info@karmenloop.com) if it is a security report.
+
+The kernel is not accepted as a pull request here. It is closed, and it ships from the site.
+
+## License
+
+Copyright © 2026 KARMEN. The files in this repository are under the GNU General Public License v3.0 only. The text is [LICENSE](LICENSE).
+
+[LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md) lets you ship this code together with the closed Koder kernel. The kernel’s own terms are [KERNEL-LICENSE.md](KERNEL-LICENSE.md): fine to use with karmenbot, including commercially; not fine to ship on its own, modify, or reverse engineer. The kernel is not licensed under GPL, and it is not in this repository.
+
+Other attributions are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). That file is the list. This readme does not add to it.
+
+## Contact
+
+[GitHub](https://github.com/KarmenLoop/karmenbot) · [info@karmenloop.com](mailto:info@karmenloop.com) · [karmenloop.com](https://karmenloop.com)
