@@ -1,24 +1,20 @@
 # karmenbot
 
-Full-screen terminal work, on the computer in front of you.
+karmenbot is KARMEN's full-screen terminal assistant. Open it in a folder, connect a model, and describe the work. It shows file changes and commands for approval before carrying them out.
 
-From [KARMEN](https://karmenloop.com). You say what the job is. It reads the folder, shows you the change, and waits. Nothing hits disk, and no command runs, until you say yes.
+[Quick start](#quick-start) · [Platforms](#platforms) · [Docs](#docs) · [Contributing](#contributing) · [License](#license) · [Contact](#contact)
 
-[Download](https://karmenloop.com/download.html) · [License](#license) · [Platforms](#platforms) · [Docs](#docs) · [Contact](#contact)
-
-[Get it](#quick-start) · [Quick start](#quick-start) · [Docs](#docs) · [Contributing](#contributing)
-
-**License.** The code in this repository is [GPL-3.0-only](LICENSE). The Koder kernel is closed. It is not in this repo, and it is not an open-source license. See [License](#license) below.
+The source here is [GPL-3.0-only](LICENSE), with the linking exception described below. The Koder kernel is proprietary, comes from the official site, and is not included in this repository. See [License](#license).
 
 ![Opening screen](docs/media/01-splash.png)
 
 ## What it is
 
-karmenbot is KARMEN’s terminal. One person, one machine, the folder you opened. Day to day you just talk to it. For a bigger job it can ask a few models to look first, then one of them does the work. If you want the same thing from Feishu, WeCom, WeChat, DingTalk, Telegram, Slack, Discord, or WhatsApp, you connect that app and leave a small background process running on this computer.
+Use it for work in the folder you opened: reading code, reviewing a diff, making edits, or running commands. You can ask several configured models for input before one of them carries out the task. Chat app connections are optional and use a background process on your computer.
 
-The phone app is not up for download. Payment, a promise, or an order still waits for you. That is the same rule as on the site.
+The [setup guide](docs/GUIDE.md) walks through installation, model setup, and your first saved file.
 
-The walkthrough, from a blank terminal to a file you can open, is [docs/GUIDE.md](docs/GUIDE.md).
+This terminal app is separate from the KARMEN BOT mobile app, which is not available for download. Payments, orders, and commitments still require your decision.
 
 ## What it does
 
@@ -72,7 +68,7 @@ karmenbot
 
 In Settings, open **Models**, add a provider, paste the key, and choose **Save and test**. Green means you are done with setup. Type a job. When the diff shows up, press `y`.
 
-Every click is written out in [docs/GUIDE.md](docs/GUIDE.md), including each chat app if you want one.
+For the full walkthrough, including chat app setup, see [docs/GUIDE.md](docs/GUIDE.md).
 
 ### From source
 
@@ -92,7 +88,7 @@ Node.js 22 or newer. No npm packages to install.
 
 | | |
 |---|---|
-| [Hand-holding guide](docs/GUIDE.md) | Install, the model, the first saved file, then each chat app |
+| [Setup guide](docs/GUIDE.md) | Install, the model, the first saved file, then each chat app |
 | [The screen](docs/TUI.md) | What you are looking at, keys, screenshots |
 | [macOS](docs/教程-macOS.md) · [Windows](docs/教程-Windows.md) · [Linux](docs/教程-Linux.md) | The same path, in Chinese, with that system’s keys |
 | [Updates](https://karmenloop.com/updates.html) | What shipped |
