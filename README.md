@@ -23,6 +23,9 @@ The walkthrough, from a blank terminal to a file you can open, is [docs/GUIDE.md
 ## What it does
 
 - **The screen.** A glass-ring open, then the session, the conversation, and a line to type on. Arrows or the mouse. `/settings` is the whole setup.
+- **Read or write.** `karmenbot ask` only reads. `karmenbot run` can edit, and it still waits for `y`. `review` writes up the diff. `fix` reruns your check. `test` adds tests in the style already in the folder.
+- **Memory, flows, CI.** `karmenbot memory` keeps notes for this folder. `karmenbot flow` runs a JSON list of steps. `karmenbot ci init` adds a pull-request review workflow.
+- **Editors.** Zed, Neovim, and Emacs can talk to `karmenbot acp`. `karmenbot editor` prints the snippet.
 - **The folder.** It can read on its own. A write shows the diff. A command shows the exact line. `y` accepts, `n` or `Esc` sends it back.
 - **A model you bring.** Pick the provider, paste the key, test it. The key stays in `~/.karmenbot`, mode 600. Dots on screen, not the key.
 - **A few models on one job.** They each take a look. One of them combines that and actually does the work. Off unless you turn it on.

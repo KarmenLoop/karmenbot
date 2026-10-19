@@ -88,11 +88,11 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
       get busy() {
         return busy;
       },
-      async turn(text, { mode: turnMode, decide, onEvent }) {
+      async turn(text, { mode: turnMode, interaction = "agent", decide, onEvent }) {
         busy = true;
         diag.state.last = null;
         try {
-          const outcome = await runPrompt({ harness, watch, thread, text, mode: turnMode, interaction: "agent", decide, onEvent });
+          const outcome = await runPrompt({ harness, watch, thread, text, mode: turnMode, interaction, decide, onEvent });
           let detail = "";
           const last = diag.state.last;
           if (unreachable(outcome.thread) && last) detail = `${last.status ? `HTTP ${last.status}` : last.error}${last.host ? ` · ${last.host}` : ""}`;

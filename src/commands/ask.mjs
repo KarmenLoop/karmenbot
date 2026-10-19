@@ -48,7 +48,7 @@ export async function run(ctx) {
   const moa = resolveMoa(loadConfig(env));
   if (opts.moa !== undefined) moa.enabled = opts.moa;
   const agent = await openAgent({ workspace: ctx.workspace, env, model, moa, providerOverride: ctx.io.providerOverride, fetchImpl: ctx.io.fetchImpl });
-  const convo = await agent.conversation("ask", { mode: opts.mode || "standard" });
+  const convo = await agent.conversation(opts.session || "ask", { mode: opts.mode || "standard" });
   const prompter = stdin.isTTY ? createPrompter({ input: stdin, output: stderr }) : null;
 
   async function decide(pause) {
@@ -64,8 +64,10 @@ export async function run(ctx) {
   }
 
   let open = false;
+  if (opts.new) await convo.reset(opts.mode || "standard");
   const outcome = await convo.turn(prompt, {
     mode: opts.mode,
+    interaction: opts.interaction || "agent",
     decide,
     onEvent(event) {
       if (opts.json) {

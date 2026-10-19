@@ -1,5 +1,8 @@
 export const COMMANDS = [
   { name: "settings", aliases: ["设置", "设置中心", "配置"] },
+  { name: "setup", aliases: ["向导", "初始化"] },
+  { name: "connect", aliases: ["接入"], args: "<platform>" },
+  { name: "memory", aliases: ["记忆"], args: "show|add|search" },
   { name: "about", aliases: ["官网", "关于", "更新"] },
   { name: "help", aliases: ["帮助", "?"] },
   { name: "learn", aliases: ["教程", "教学"] },

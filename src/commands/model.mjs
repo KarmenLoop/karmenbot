@@ -1,6 +1,6 @@
 import { createCoach } from "../coach.mjs";
 import { KarmenError } from "../errors.mjs";
-import { loadConfig, secretsFile } from "../home.mjs";
+import { loadConfig, saveConfig, secretsFile } from "../home.mjs";
 import { loadKernel, modelPresets } from "../kernel.mjs";
 import { addModel, listModels, recordFor, removeModel, useModel } from "../models.mjs";
 import { createPrompter } from "../prompt.mjs";
@@ -28,7 +28,7 @@ export async function testModel(ctx, record, prompter) {
 
 // Saves a model picked from the vendor catalog; a second model of the same
 // vendor gets its own id. Shared with the settings centre.
-export function addFromPreset(env, preset, { model, baseUrl = preset.baseUrl, protocol = preset.protocol, apiKey = "", makeDefault = false }) {
+export function addFromPreset(env, preset, { model, baseUrl = preset.baseUrl, protocol = preset.protocol, apiKey = "", makeDefault = false, keyEnv = "" }) {
   const local = preset.id === "local" || preset.auth === "none";
   const models = listModels(env);
   const taken = models.find((item) => item.id === preset.id && item.model !== model);
@@ -44,6 +44,7 @@ export function addFromPreset(env, preset, { model, baseUrl = preset.baseUrl, pr
     sendApiKeyHeader: preset.sendApiKeyHeader,
     contextWindow: preset.contextWindow,
     maxOutput: preset.maxOutput,
+    keyEnv,
   }, { apiKey, makeDefault }, env);
 }
 
@@ -104,6 +105,27 @@ export async function run(ctx) {
       recordFor(args[1], env);
       removeModel(args[1], env);
       prompter.print(t("cli.removed", { id: args[1] }));
+      return 0;
+    }
+    if (action === "presets") {
+      for (const item of (await modelPresets()).filter((preset) => !preset.stopped)) prompter.print(`${item.id.padEnd(16)} ${item.name}${item.model ? ` · ${item.model}` : ""}`);
+      return 0;
+    }
+    if (action === "set") {
+      if (!ctx.opts.preset && !ctx.opts.baseUrl) throw new KarmenError("err.flagValue", { flag: "--preset or --base-url" });
+      const presets = await modelPresets();
+      const preset = presets.find((item) => item.id === ctx.opts.preset) || { id: "custom", name: ctx.opts.modelId || "custom", model: ctx.opts.modelId, baseUrl: ctx.opts.baseUrl, protocol: ctx.opts.protocol || "openai", auth: ctx.opts.keyEnv ? "bearer" : "none" };
+      if (!preset.model && !ctx.opts.modelId) throw new KarmenError("err.flagValue", { flag: "--model" });
+      const entry = addFromPreset(env, preset, { model: ctx.opts.modelId || preset.model, baseUrl: ctx.opts.baseUrl || preset.baseUrl, protocol: ctx.opts.protocol || preset.protocol, makeDefault: true, keyEnv: ctx.opts.keyEnv || "" });
+      prompter.print(t("cli.saved", { name: entry.name, model: entry.model, file: secretsFile(env) }));
+      return 0;
+    }
+    if (action === "context") {
+      const id = loadConfig(env).model;
+      if (!id) throw new KarmenError("model.notConfigured");
+      const models = listModels(env).map((item) => item.id === id ? { ...item, contextWindow: Number(ctx.opts.contextWindow || item.contextWindow), maxOutput: Number(ctx.opts.maxOutput || item.maxOutput) } : item);
+      saveConfig({ models }, env);
+      prompter.print(`${id} context ${ctx.opts.contextWindow || ""} output ${ctx.opts.maxOutput || ""}`);
       return 0;
     }
     if (action === "test") {

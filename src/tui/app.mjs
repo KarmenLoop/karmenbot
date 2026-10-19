@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { openAgent } from "../agent.mjs";
@@ -15,6 +16,7 @@ import { LEARN_PAGES, createT as createTuiT, normalizeLang, resolveLang } from "
 import { createKeyParser } from "./keys.mjs";
 import { createScreen, fitSpans, overlaySpans, sp, spansWidth, toAnsi, wrapSpans } from "./paint.mjs";
 import { createSettings } from "./settings.mjs";
+import { openMemory } from "../memory-store.mjs";
 import { matchSlash, parseSlash } from "./slash.mjs";
 import { C } from "./theme.mjs";
 import { createTranscript } from "./transcript.mjs";
@@ -547,8 +549,31 @@ export function runTui(options = {}) {
   async function runSlash(command) {
     switch (command.name) {
       case "settings":
+      case "setup":
         openSettings();
         return;
+      case "connect":
+        openSettings();
+        state.settings?.open("platforms");
+        return;
+      case "memory": {
+        const memory = openMemory(workspace, env, "default");
+        const data = memory.read();
+        const [verb, ...rest] = command.arg.split(/\s+/).filter(Boolean);
+        if (verb === "add" && rest.join(" ")) {
+          const text = rest.join(" ").slice(0, 4096);
+          const id = crypto.randomUUID();
+          memory.write({ ...data, notes: [...data.notes.slice(-31), { id, text, at: Date.now() }] });
+          info(`${id} ${text}`, C.ok);
+          return;
+        }
+        const query = (verb === "search" ? rest.join(" ") : command.arg).toLowerCase();
+        const notes = query ? data.notes.filter((note) => note.text.toLowerCase().includes(query)) : data.notes;
+        transcript.info(notes.length
+          ? notes.map((note) => [sp(`${note.id.slice(0, 8)} `, { fg: C.dim }), sp(note.text, { fg: C.text })])
+          : [[sp(t("memory.empty"), { fg: C.dim })]]);
+        return;
+      }
       case "about":
         transcript.info(identityText(state.lang).split("\n").map((line) => [sp(line, { fg: C.text })]));
         checkUpdate({ env, fetchImpl: options.fetchImpl }).then((result) => {

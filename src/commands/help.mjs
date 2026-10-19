@@ -2,7 +2,16 @@ const ZH = `karmenbot {version}
 
 用法
   karmenbot                       打开全屏界面（折光体开屏、对话、确认弹窗）
-  karmenbot "任务"                 不开界面，直接执行一个任务（脚本、管道、CI 也能用）
+  karmenbot run "任务"             不开界面，直接办事（脚本、管道、CI 也能用）
+  karmenbot ask "问题"             只读：不改文件、不跑命令
+  karmenbot review                 看 git diff，写出审查，不改文件
+  karmenbot fix --command "npm test"   检查失败就改，最多三次
+  karmenbot test <文件> --command "npm test"   按仓库现有风格补测试
+  karmenbot flow 步骤.json          按 JSON 依次 ask / run / shell
+  karmenbot ci init                写入 GitHub Actions 审查工作流
+  karmenbot memory show|search|add|remove|clear|forget
+  karmenbot editor zed|nvim|emacs  打印编辑器接入片段（配合 karmenbot acp）
+  karmenbot model presets|set|context|list|add|use|test
   karmenbot settings               设置中心（也可以输入 karmenbot 设置）：方向键或鼠标点选，配好模型、平台、网关
   karmenbot update                 官网信息与检查更新（界面里输入 /官网）
   karmenbot setup                  一问一答式配置（输入编号回车），效果和设置中心一样
@@ -34,7 +43,16 @@ const EN = `karmenbot {version}
 
 Usage
   karmenbot                       open the full-screen interface
-  karmenbot "task"                run one task without the interface (scripts, pipes, CI)
+  karmenbot run "task"            do the work without the screen
+  karmenbot ask "question"        read only: no edits, no commands
+  karmenbot review                 review the git diff and write nothing
+  karmenbot fix --command "npm test"
+  karmenbot test <file> --command "npm test"
+  karmenbot flow steps.json        ask / run / shell steps
+  karmenbot ci init                GitHub Actions review workflow
+  karmenbot memory show|search|add|remove|clear|forget
+  karmenbot editor zed|nvim|emacs  editor snippets for karmenbot acp
+  karmenbot model presets|set|context|list|add|use|test
   karmenbot settings              settings centre: arrows or mouse for models, chat apps, gateway
   karmenbot update                official site and update check
   karmenbot setup                 the same as questions and answers
