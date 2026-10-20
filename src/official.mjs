@@ -15,7 +15,7 @@ const DEFAULTS = {
   updates: "https://karmenloop.com/updates.html",
   github: "https://github.com/KarmenLoop/karmenbot",
   email: "info@karmenloop.com",
-  dist: "https://karmenloop.com/downloads/karmenbot",
+  dist: "https://github.com/KarmenLoop/karmenbot/releases/latest/download",
 };
 
 export function readSiteFile() {

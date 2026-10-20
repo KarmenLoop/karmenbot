@@ -45,7 +45,7 @@ macOS 12 及以上都可以，Intel 和 Apple 芯片都支持，不需要管理�
 ## 第 2 步：粘贴这一行，回车
 
 ```bash
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 ```
 
 粘贴用 `⌘V`。

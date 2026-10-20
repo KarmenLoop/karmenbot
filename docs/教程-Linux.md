@@ -52,7 +52,7 @@ Karmen 是 KARMEN 在终端里的全屏界面。你用中文写出要办的事�
 ## 第 2 步：粘贴这一行，回车
 
 ```bash
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 ```
 
 粘贴用 `Ctrl+Shift+V`（终端里 `Ctrl+V` 不管用，这是 Linux 终端的老规矩）。
@@ -60,7 +60,7 @@ curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
 没有 curl？Ubuntu / Debian 先运行 `sudo apt install curl`，Fedora 运行 `sudo dnf install curl`；或者直接用 wget：
 
 ```bash
-wget -qO- https://karmenloop.com/downloads/karmenbot/install.sh | sh
+wget -qO- https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 ```
 
 ## 第 3 步：看它表演

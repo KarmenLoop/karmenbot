@@ -18,7 +18,7 @@ async function main() {
     const index = process.argv.indexOf(name);
     return index > 0 ? process.argv[index + 1] : undefined;
   };
-  const base = (arg("--from") || process.env.KARMENBOT_DIST_URL || "").replace(/\/+$/, "");
+  const base = (arg("--from") || process.env.KARMENBOT_DIST_URL || "https://github.com/KarmenLoop/karmenbot/releases/latest/download").replace(/\/+$/, "");
   const fail = (message) => {
     throw new Error(message);
   };

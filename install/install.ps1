@@ -152,7 +152,9 @@ try {
   Step "加入 PATH"
   $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
   if (-not $UserPath) { $UserPath = "" }
-  if ($UserPath -split ";" | Where-Object { $_ -eq $BinDir }) {
+  if ($env:KARMENBOT_NO_MODIFY_PATH -eq "1") {
+    Done "PATH unchanged; use $BinDir\karmenbot.cmd"
+  } elseif ($UserPath -split ";" | Where-Object { $_ -eq $BinDir }) {
     Done "已在 PATH 里"
   } else {
     [Environment]::SetEnvironmentVariable("Path", (($BinDir, $UserPath) -join ";").TrimEnd(";"), "User")

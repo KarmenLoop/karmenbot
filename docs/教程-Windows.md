@@ -50,7 +50,7 @@ Karmen 是 KARMEN 在终端里的全屏界面。你用中文写出要办的事�
 2. 复制下面这一行，粘贴到窗口里（`Ctrl+V`，或在窗口里点鼠标右键），回车：
 
 ```powershell
-irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
+irm https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.ps1 | iex
 ```
 
 ## 方法二：CMD（命令提示符）
@@ -59,7 +59,7 @@ irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
 2. 粘贴下面这一行（CMD 里点鼠标右键就是粘贴），回车：
 
 ```bat
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
 ```
 
 它会叫上 PowerShell 帮忙，只这一次，不改执行策略。

@@ -33,14 +33,14 @@ test("karmenbot 教程 prints every chapter in Chinese when piped, and one chapt
 test("each system gets its own tutorial: its commands, keys and paths, none of the others'", async () => {
   const win = (await cli(["教程", "2"], [], "win32")).out;
   assert.match(win, /安装（Windows）/);
-  assert.match(win, /irm https:\/\/karmenloop\.com\/downloads\/karmenbot\/install\.ps1 \| iex/);
+  assert.match(win, /irm https:\/\/github\.com\/KarmenLoop\/karmenbot\/releases\/latest\/download\/install\.ps1 \| iex/);
   assert.match(win, /install\.cmd/);
   assert.match(win, /Windows 7 \/ 8 \/ XP/);
-  assert.doesNotMatch(win, /curl -fsSL https:\/\/karmenloop\.com\/downloads\/karmenbot\/install\.sh/);
+  assert.doesNotMatch(win, /curl -fsSL https:\/\/github\.com\/KarmenLoop\/karmenbot\/releases\/latest\/download\/install\.sh/);
   const mac = (await cli(["教程", "2"], [], "darwin")).out;
   assert.match(mac, /安装（macOS）/);
   assert.match(mac, /⌘ 空格/);
-  assert.match(mac, /curl -fsSL https:\/\/karmenloop\.com\/downloads\/karmenbot\/install\.sh \| sh/);
+  assert.match(mac, /curl -fsSL https:\/\/github\.com\/KarmenLoop\/karmenbot\/releases\/latest\/download\/install\.sh \| sh/);
   assert.doesNotMatch(mac, /irm |PowerShell|apt install/);
   const linux = (await cli(["教程", "2"], [], "linux")).out;
   assert.match(linux, /Ctrl\+Alt\+T/);
