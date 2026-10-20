@@ -5,7 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const pkg = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const base = 'https://github.com/KarmenLoop/karmenbot/releases/latest/download';
@@ -30,7 +30,7 @@ test('a source checkout fetches its kernel from the public release without a web
   fs.writeFileSync(preload, `import fs from 'node:fs';\nglobalThis.fetch = async (url, options) => {\n if (url !== ${JSON.stringify(base)} + '/latest.json' && url !== ${JSON.stringify(base + '/' + name + '.tar.gz')}) throw new Error('Unexpected distribution URL: ' + url);\n if (options?.headers?.cookie || options?.headers?.authorization) throw new Error('Public downloads must not need credentials');\n return new Response(url.endsWith('latest.json') ? ${JSON.stringify(JSON.stringify(manifest))} : fs.readFileSync(${JSON.stringify(archive)}));\n};\n`);
   const env = {...process.env};
   delete env.KARMENBOT_DIST_URL;
-  const result = spawnSync(process.execPath, ['--import', preload, 'scripts/fetch-kernel.mjs'], {cwd: app, env, encoding: 'utf8'});
+  const result = spawnSync(process.execPath, ['--import', pathToFileURL(preload).href, 'scripts/fetch-kernel.mjs'], {cwd: app, env, encoding: 'utf8'});
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.equal(fs.readFileSync(path.join(app, 'vendor/fixture.mjs'), 'utf8'), 'export {};\n');
 });
