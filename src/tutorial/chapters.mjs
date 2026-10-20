@@ -64,7 +64,7 @@ function install(os) {
   const box = (system, node, profile) => `\`\`\`text
 ✓ 1  检查系统      ${system}
 ✓ 2  准备 Node.js   ${node}
-✓ 3  获取发布信息   karmenbot 0.1.0
+✓ 3  获取发布信息   karmenbot 0.1.1
 ✓ 4  下载安装包     204 KB · SHA-256 已校验
 ✓ 5  安装           启动命令就位
 ✓ 6  加入 PATH      ${profile}

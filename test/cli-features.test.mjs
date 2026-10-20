@@ -21,7 +21,7 @@ test("version names the site, and editor, memory, and ci work without a model", 
   t.after(() => Promise.all([fs.rm(home, { recursive: true, force: true }), fs.rm(work, { recursive: true, force: true })]));
   const env = { KARMENBOT_HOME: home };
   const version = await cli(["version"], env);
-  assert.match(version.out, /karmenbot 0\.1\.0/);
+  assert.match(version.out, /karmenbot 0\.1\.1/);
   assert.match(version.out, /https:\/\/karmenloop\.com\/updates\.html/);
   assert.match(version.out, /info@karmenloop\.com/);
 

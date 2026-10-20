@@ -67,7 +67,8 @@ try {
   Step "检查系统"
   $Arch = if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64" -or $env:PROCESSOR_ARCHITEW6432 -eq "ARM64") { "arm64" } else { "x64" }
   $Name_ = if ($Os.Build -ge 22000) { "Windows 11" } else { "Windows 10" }
-  if (-not (Get-Command tar.exe -ErrorAction SilentlyContinue)) { Fail "缺少 tar.exe，请先把 Windows 10 更新到 1803 或更新的版本" "tar.exe is missing; update Windows 10 to 1803 or later" }
+  $Tar = Join-Path $env:SystemRoot "System32\tar.exe"
+  if (-not (Test-Path $Tar)) { Fail "缺少 tar.exe，请先把 Windows 10 更新到 1803 或更新的版本" "tar.exe is missing; update Windows 10 to 1803 or later" }
   Done "$Name_ (build $($Os.Build)) · $Arch"
 
   Step "准备 Node.js"
@@ -121,9 +122,9 @@ try {
   Step "安装"
   $App = Join-Path $KbHome "app\$($Manifest.version)"
   New-Item -ItemType Directory -Force -Path "$Tmp\unpack", (Join-Path $KbHome "app") | Out-Null
-  tar.exe -xzf "$Tmp\$($Manifest.file)" -C "$Tmp\unpack"
+  & $Tar -xzf "$Tmp\$($Manifest.file)" -C "$Tmp\unpack"
   if ($LASTEXITCODE -ne 0) { Fail "解压失败" "could not unpack the archive" }
-  tar.exe -xzf "$Tmp\$KFile" -C "$Tmp\unpack"
+  & $Tar -xzf "$Tmp\$KFile" -C "$Tmp\unpack"
   if ($LASTEXITCODE -ne 0) { Fail "内核解压失败" "could not unpack the kernel" }
   $KDir = "$Tmp\unpack\karmenbot-kernel-$($Manifest.version)"
   Move-Item "$KDir\vendor" "$Tmp\unpack\karmenbot-$($Manifest.version)\vendor"

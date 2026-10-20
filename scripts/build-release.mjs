@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import { BANNER_WIDE_COLUMNS, bannerAnsi } from "../src/brand.mjs";
 import { checkVendor } from "../src/commands/doctor.mjs";
 import { VERSION } from "../src/version.mjs";
+import { powershellBootstrap } from "./installer-bootstrap.mjs";
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (name, fallback) => {
@@ -58,16 +59,6 @@ ${cases.join("\n")}
 // Windows PowerShell 5.1 decodes `irm` downloads as Latin-1 unless the server
 // says UTF-8, which would garble every Chinese line. Ship an ASCII wrapper
 // that carries the real script as base64 and decodes it as UTF-8.
-function asciiBootstrap(script) {
-  const payload = Buffer.from(script, "utf8").toString("base64").replace(/.{1,100}/g, "$&\n").trim();
-  return `# karmenbot installer for Windows 10 / 11. Run in PowerShell:  irm ${baseUrl.replace(/\/+$/, "")}/install.ps1 | iex
-# The installer is UTF-8 inside this ASCII wrapper so no console or server setting can garble it.
-$KarmenbotInstaller = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(@'
-${payload}
-'@ -replace '\s', ''))
-Invoke-Expression $KarmenbotInstaller
-`;
-}
 
 function powershellBanner() {
   const quote = (line) => line.replaceAll("'", "''");
@@ -106,7 +97,7 @@ try {
       .replace("__PS_BANNER__", script === "install.ps1" ? powershellBanner() : "")
       .replaceAll("__BASE_URL__", baseUrl.replace(/\/+$/, ""))
       .replaceAll("__NODE_VERSION__", nodeVersion);
-    fs.writeFileSync(path.join(out, script), script === "install.cmd" ? text.replace(/\r?\n/g, "\r\n") : script === "install.ps1" ? asciiBootstrap(text) : text, { mode: 0o755 });
+    fs.writeFileSync(path.join(out, script), script === "install.cmd" ? text.replace(/\r?\n/g, "\r\n") : script === "install.ps1" ? powershellBootstrap(text, baseUrl) : text, { mode: 0o755 });
   }
   const sums = [file, kernel, "install.sh", "install.ps1", "install.cmd", "latest.json"].map((item) => `${sha(path.join(out, item))}  ${item}`).join("\n");
   fs.writeFileSync(path.join(out, "SHA256SUMS"), `${sums}\n`);

@@ -59,15 +59,15 @@ test("one-line install, re-install, a real task from the installed copy, tampere
   const build = spawnSync(process.execPath, [path.join(pkg, "scripts", "build-release.mjs"), "--base-url", release.url, "--out", dist], { encoding: "utf8" });
   assert.equal(build.status, 0, build.stderr);
   const manifest = JSON.parse(await fs.readFile(path.join(dist, "latest.json"), "utf8"));
-  assert.equal(manifest.version, "0.1.0");
-  assert.equal(manifest.kernel.file, "karmenbot-kernel-0.1.0.tar.gz");
+  assert.equal(manifest.version, "0.1.1");
+  assert.equal(manifest.kernel.file, "karmenbot-kernel-0.1.1.tar.gz");
   const listing = (file) => spawnSync("tar", ["-tzf", path.join(dist, file)], { encoding: "utf8" }).stdout.split("\n");
   const app = listing(manifest.file);
-  assert.ok(app.includes("karmenbot-0.1.0/LICENSE") && app.includes("karmenbot-0.1.0/bin/karmenbot.mjs"));
+  assert.ok(app.includes("karmenbot-0.1.1/LICENSE") && app.includes("karmenbot-0.1.1/bin/karmenbot.mjs"));
   assert.ok(!app.some((entry) => entry.includes("/vendor")), "the open-source archive carries no kernel");
   const kernel = listing(manifest.kernel.file);
-  assert.ok(kernel.includes("karmenbot-kernel-0.1.0/vendor/MANIFEST.json") && kernel.includes("karmenbot-kernel-0.1.0/KERNEL-LICENSE.md"));
-  assert.ok(kernel.filter(Boolean).every((entry) => /^karmenbot-kernel-0\.1\.0\/(vendor\/|KERNEL-LICENSE\.md$|$)/.test(entry)), "the kernel archive carries only the kernel");
+  assert.ok(kernel.includes("karmenbot-kernel-0.1.1/vendor/MANIFEST.json") && kernel.includes("karmenbot-kernel-0.1.1/KERNEL-LICENSE.md"));
+  assert.ok(kernel.filter(Boolean).every((entry) => /^karmenbot-kernel-0\.1\.1\/(vendor\/|KERNEL-LICENSE\.md$|$)/.test(entry)), "the kernel archive carries only the kernel");
   assert.match(await fs.readFile(path.join(dist, "install.sh"), "utf8"), new RegExp(`BASE="\\$\\{KARMENBOT_DIST_URL:-${release.url.replace(/[.:/]/g, "\\$&")}\\}"`));
 
   const env = (dir) => ({ HOME: dir, PATH: `${path.dirname(process.execPath)}:/usr/bin:/bin:/usr/sbin:/sbin`, SHELL: "/bin/zsh", KARMENBOT_NO_SETUP: "1", LANG: "zh_CN.UTF-8" });
@@ -75,22 +75,22 @@ test("one-line install, re-install, a real task from the installed copy, tampere
 
   const first = await sh(oneLiner, env(home));
   assert.equal(first.status, 0, first.stderr + first.stdout);
-  assert.match(first.stdout, /karmenbot 0\.1\.0 安装完成/);
+  assert.match(first.stdout, /karmenbot 0\.1\.1 安装完成/);
   for (const step of ["检查系统", "准备 Node.js", "获取发布信息", "下载安装包", "安装", "加入 PATH"]) assert.match(first.stdout, new RegExp(`✓ \\d  ${step}`), step);
   assert.match(first.stdout, /KB \+ 内核 \d+ KB · SHA-256 已校验/);
-  await fs.access(path.join(home, ".karmenbot", "app", "0.1.0", "KERNEL-LICENSE.md"));
-  const site = JSON.parse(await fs.readFile(path.join(home, ".karmenbot", "app", "0.1.0", "site.json"), "utf8"));
+  await fs.access(path.join(home, ".karmenbot", "app", "0.1.1", "KERNEL-LICENSE.md"));
+  const site = JSON.parse(await fs.readFile(path.join(home, ".karmenbot", "app", "0.1.1", "site.json"), "utf8"));
   assert.equal(site.site, "https://karmenloop.com");
   assert.equal(site.updates, "https://karmenloop.com/updates.html");
   assert.equal(site.distUrl, release.url);
-  assert.match(first.stdout, /KARMENBOT 0\.1\.0/, "the banner is printed");
+  assert.match(first.stdout, /KARMENBOT 0\.1\.1/, "the banner is printed");
   const launcher = path.join(home, ".local", "bin", "karmenbot");
   assert.equal((await fs.stat(launcher)).mode & 0o111, 0o111);
-  assert.equal(await fs.readlink(path.join(home, ".karmenbot", "app", "current")), path.join(home, ".karmenbot", "app", "0.1.0"));
-  assert.equal((await sh(`"${launcher}" --version`, env(home))).stdout.trim(), "karmenbot 0.1.0");
+  assert.equal(await fs.readlink(path.join(home, ".karmenbot", "app", "current")), path.join(home, ".karmenbot", "app", "0.1.1"));
+  assert.equal((await sh(`"${launcher}" --version`, env(home))).stdout.trim(), "karmenbot 0.1.1");
   const doctor = await sh(`"${launcher}" doctor`, env(home));
   assert.match(doctor.stdout, /✓ 内核快照 (\d+)\/\1/);
-  assert.match(doctor.stdout, new RegExp(`安装位置 ${path.join(await fs.realpath(home), ".karmenbot", "app", "0.1.0").replace(/[.]/g, "\\.")}`));
+  assert.match(doctor.stdout, new RegExp(`安装位置 ${path.join(await fs.realpath(home), ".karmenbot", "app", "0.1.1").replace(/[.]/g, "\\.")}`));
 
   const again = await sh(`curl -fsSL ${release.url}/install.sh | /bin/dash`, env(home));
   assert.equal(again.status, 0, `dash (Ubuntu's /bin/sh) must run the installer too\n${again.stderr}`);
@@ -109,14 +109,14 @@ test("one-line install, re-install, a real task from the installed copy, tampere
   assert.notEqual(refused.status, 0);
   assert.match(refused.stderr, /安装包校验不一致，已停止，没有安装任何东西/);
   await assert.rejects(fs.access(path.join(other, ".local", "bin", "karmenbot")));
-  await assert.rejects(fs.access(path.join(other, ".karmenbot", "app", "0.1.0")));
+  await assert.rejects(fs.access(path.join(other, ".karmenbot", "app", "0.1.1")));
 
   const forgedKernel = await staticServer(dist, { "latest.json": JSON.stringify({ ...manifest, kernel: { ...manifest.kernel, sha256: "0".repeat(64) } }) });
   t.after(() => forgedKernel.close());
   const refusedKernel = await sh(`curl -fsSL ${forgedKernel.url}/install.sh | KARMENBOT_DIST_URL=${forgedKernel.url} sh`, env(other));
   assert.notEqual(refusedKernel.status, 0);
   assert.match(refusedKernel.stderr, /内核包校验不一致，已停止，没有安装任何东西/);
-  await assert.rejects(fs.access(path.join(other, ".karmenbot", "app", "0.1.0")));
+  await assert.rejects(fs.access(path.join(other, ".karmenbot", "app", "0.1.1")));
 
   const removed = await sh(`"${launcher}" uninstall --yes`, env(home));
   assert.equal(removed.status, 0, removed.stderr);
@@ -146,5 +146,5 @@ test("Windows installers: ASCII-only PowerShell wrapper that decodes to the full
   assert.match(cmd, /Version 1\[0-9\]/);
   assert.match(cmd, /irm 'https:\/\/get\.example\.invalid\/kb\/install\.ps1' \| iex/);
   const sums = await fs.readFile(path.join(dist, "SHA256SUMS"), "utf8");
-  for (const file of ["karmenbot-kernel-0.1.0.tar.gz", "install.sh", "install.ps1", "install.cmd", "latest.json"]) assert.match(sums, new RegExp(`  ${file.replace(".", "\\.")}$`, "m"));
+  for (const file of ["karmenbot-kernel-0.1.1.tar.gz", "install.sh", "install.ps1", "install.cmd", "latest.json"]) assert.match(sums, new RegExp(`  ${file.replace(".", "\\.")}$`, "m"));
 });

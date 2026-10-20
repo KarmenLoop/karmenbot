@@ -28,13 +28,13 @@ test("the update check compares versions and sends nothing about the user", asyn
     seen.push(url);
     return { ok: true, json: async () => ({ version: "0.2.0" }) };
   };
-  const newer = await checkUpdate({ env: { KARMENBOT_DIST_URL: "https://karmenloop.com/downloads/karmenbot", KARMENBOT_HOME: "/no/such" }, fetchImpl, version: "0.1.0" });
+  const newer = await checkUpdate({ env: { KARMENBOT_DIST_URL: "https://karmenloop.com/downloads/karmenbot", KARMENBOT_HOME: "/no/such" }, fetchImpl, version: "0.1.1" });
   assert.equal(newer.newer, true);
   assert.equal(newer.latest, "0.2.0");
   assert.equal(seen[0], "https://karmenloop.com/downloads/karmenbot/latest.json");
-  const same = await checkUpdate({ env: { KARMENBOT_DIST_URL: "https://karmenloop.com/downloads/karmenbot" }, fetchImpl: async () => ({ ok: true, json: async () => ({ version: "0.1.0" }) }), version: "0.1.0" });
+  const same = await checkUpdate({ env: { KARMENBOT_DIST_URL: "https://karmenloop.com/downloads/karmenbot" }, fetchImpl: async () => ({ ok: true, json: async () => ({ version: "0.1.1" }) }), version: "0.1.1" });
   assert.equal(same.newer, false);
-  const down = await checkUpdate({ env: { KARMENBOT_DIST_URL: "https://karmenloop.com/downloads/karmenbot" }, fetchImpl: async () => { throw new Error("offline"); }, version: "0.1.0" });
+  const down = await checkUpdate({ env: { KARMENBOT_DIST_URL: "https://karmenloop.com/downloads/karmenbot" }, fetchImpl: async () => { throw new Error("offline"); }, version: "0.1.1" });
   assert.equal(down.ok, false);
   assert.match(down.message, /offline/);
 });

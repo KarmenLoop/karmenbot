@@ -17,7 +17,7 @@ const home = path.join(root, 'home');
 const kbHome = path.join(home, '.karmenbot');
 const workspace = path.join(root, 'workspace');
 await fs.mkdir(home); await fs.mkdir(workspace);
-const env = {...process.env, HOME: home, USERPROFILE: home, KARMENBOT_HOME: kbHome, KARMENBOT_BIN_DIR: path.join(home, 'bin'), KARMENBOT_NO_SETUP: '1', KARMENBOT_NO_MODIFY_PATH: '1', NO_COLOR: '1', LANG: 'en_US.UTF-8'};
+const env = {...process.env, HOME: home, USERPROFILE: home, KARMENBOT_HOME: kbHome, KARMENBOT_DIST_URL: base, KARMENBOT_BIN_DIR: path.join(home, 'bin'), KARMENBOT_NO_SETUP: '1', KARMENBOT_NO_MODIFY_PATH: '1', NO_COLOR: '1', LANG: 'en_US.UTF-8'};
 const receipt = {base, platform: process.platform, arch: process.arch, node: process.version, checks: [], scope: 'Real public downloads, native installation, kernel tools and approvals with a loopback model fixture. Commercial model accounts and live chat channels are not exercised.'};
 const quotePS = value => "'" + value.replaceAll("'", "''") + "'";
 function run(command, args, extra = {}) {
@@ -49,7 +49,7 @@ try {
   assert.equal(install.code, 0, install.stdout + install.stderr);
   receipt.checks.push({name: 'public installer', exit_code: install.code, version: manifest.version});
   const launcher = process.platform === 'win32' ? path.join(kbHome,'bin','karmenbot.cmd') : path.join(home,'bin','karmenbot');
-  await fs.access(launcher);
+  try { await fs.access(launcher); } catch { throw new Error(`Installer did not create ${launcher}.\n${install.stdout}\n${install.stderr}`); }
   const cli = args => process.platform === 'win32'
     ? run('powershell.exe',['-NoProfile','-Command',`& ${[launcher,...args].map(quotePS).join(' ')}; exit $LASTEXITCODE`])
     : run(launcher,args);

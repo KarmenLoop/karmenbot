@@ -132,7 +132,7 @@ test("connect telegram, then pair approve, then gateway status", async (t) => {
 
 test("help, version, unknown commands and doctor", async (t) => {
   const { env } = await home(t);
-  assert.match((await cli(["--version"], { env })).out, /^karmenbot 0\.1\.0/);
+  assert.match((await cli(["--version"], { env })).out, /^karmenbot 0\.1\.1/);
   assert.match((await cli(["help"], { env })).out, /karmenbot connect/);
   assert.match((await cli(["help", "--lang", "en"], { env })).out, /karmenbot ask "question"/);
   const unknown = await cli(["frobnicate"], { env });

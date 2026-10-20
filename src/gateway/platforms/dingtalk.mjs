@@ -35,7 +35,7 @@ export function createDingtalk({ settings = {}, secrets = {}, fetchImpl = global
         try {
           opened = await requestJson(fetchImpl, `${api}/v1.0/gateway/connections/open`, {
             method: "POST",
-            body: { clientId: secrets.clientId, clientSecret: secrets.clientSecret, subscriptions: [{ type: "CALLBACK", topic: BOT_TOPIC }], ua: "karmenbot/0.1.0", localIp: localIp() },
+            body: { clientId: secrets.clientId, clientSecret: secrets.clientSecret, subscriptions: [{ type: "CALLBACK", topic: BOT_TOPIC }], ua: "karmenbot/0.1.1", localIp: localIp() },
             signal,
           });
         } catch (error) {

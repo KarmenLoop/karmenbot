@@ -16,7 +16,7 @@ test('a source checkout fetches its kernel from the public release without a web
   const app = path.join(root, 'app');
   for (const dir of ['scripts', 'src']) fs.mkdirSync(path.join(app, dir), {recursive: true});
   for (const file of ['scripts/fetch-kernel.mjs', 'src/version.mjs']) fs.copyFileSync(path.join(pkg, file), path.join(app, file));
-  const name = 'karmenbot-kernel-0.1.0';
+  const name = 'karmenbot-kernel-0.1.1';
   const vendor = path.join(root, name, 'vendor');
   fs.mkdirSync(vendor, {recursive: true});
   const sha = body => crypto.createHash('sha256').update(body).digest('hex');
@@ -25,7 +25,7 @@ test('a source checkout fetches its kernel from the public release without a web
   fs.writeFileSync(path.join(root, name, 'KERNEL-LICENSE.md'), 'Synthetic fixture license\n');
   const archive = path.join(root, name + '.tar.gz');
   assert.equal(spawnSync('tar', ['-czf', archive, '-C', root, name]).status, 0);
-  const manifest = {version: '0.1.0', kernel: {file: name + '.tar.gz', sha256: sha(fs.readFileSync(archive))}};
+  const manifest = {version: '0.1.1', kernel: {file: name + '.tar.gz', sha256: sha(fs.readFileSync(archive))}};
   const preload = path.join(root, 'download.mjs');
   fs.writeFileSync(preload, `import fs from 'node:fs';\nglobalThis.fetch = async (url, options) => {\n if (url !== ${JSON.stringify(base)} + '/latest.json' && url !== ${JSON.stringify(base + '/' + name + '.tar.gz')}) throw new Error('Unexpected distribution URL: ' + url);\n if (options?.headers?.cookie || options?.headers?.authorization) throw new Error('Public downloads must not need credentials');\n return new Response(url.endsWith('latest.json') ? ${JSON.stringify(JSON.stringify(manifest))} : fs.readFileSync(${JSON.stringify(archive)}));\n};\n`);
   const env = {...process.env};
