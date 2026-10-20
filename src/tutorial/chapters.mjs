@@ -82,7 +82,7 @@ ${f.terminal}。
 ## 第 2 步：粘贴这一行，回车
 
 \`\`\`bash
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 \`\`\`
 
 粘贴用 ${f.paste}。
@@ -126,7 +126,7 @@ ${f.terminal}。
 ## 第 2 步：粘贴这一行，回车
 
 \`\`\`bash
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 \`\`\`
 
 粘贴用 ${f.paste}（终端里 \`Ctrl+V\` 不管用，这是 Linux 终端的老规矩）。
@@ -134,7 +134,7 @@ curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
 没有 curl？Ubuntu / Debian 先运行 \`sudo apt install curl\`，Fedora 运行 \`sudo dnf install curl\`；或者直接用 wget：
 
 \`\`\`bash
-wget -qO- https://karmenloop.com/downloads/karmenbot/install.sh | sh
+wget -qO- https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 \`\`\`
 
 ## 第 3 步：看它表演
@@ -174,7 +174,7 @@ ${box("Ubuntu 24.04 LTS · x64", "系统自带 v22.x，或自动下载一份私�
 2. 复制下面这一行，粘贴到窗口里（${f.paste}），回车：
 
 \`\`\`powershell
-irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
+irm https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.ps1 | iex
 \`\`\`
 
 ## 方法二：CMD（命令提示符）
@@ -183,7 +183,7 @@ irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
 2. 粘贴下面这一行（CMD 里点鼠标右键就是粘贴），回车：
 
 \`\`\`bat
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\\karmenbot-install.cmd && %TEMP%\\karmenbot-install.cmd
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.cmd -o %TEMP%\\karmenbot-install.cmd && %TEMP%\\karmenbot-install.cmd
 \`\`\`
 
 它会叫上 PowerShell 帮忙，只这一次，不改执行策略。

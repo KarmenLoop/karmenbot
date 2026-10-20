@@ -224,7 +224,7 @@ test("MoA set up with Space and arrows; tutorial pages per system; language swit
   await app.see("安装（Windows）");
   app.term.click("2. 安装（Windows）");
   await app.see("方法一：PowerShell");
-  assert.match(app.screen(), /irm https:\/\/karmenloop\.com\/downloads\/karmenbot\/install\.ps1 \| iex/);
+  assert.match(app.screen(), /irm https:\/\/github\.com\/KarmenLoop\/karmenbot\/releases\/latest\/download\/install\.ps1 \| iex/);
   app.term.type("\x1b[C");
   await app.see("第 3 章 · 设置中心");
   await esc(app);

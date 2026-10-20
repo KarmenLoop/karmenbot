@@ -4,7 +4,7 @@ karmenbot is KARMEN's full-screen terminal assistant. Open it in a folder, conne
 
 [Quick start](#quick-start) · [Platforms](#platforms) · [Docs](#docs) · [Contributing](#contributing) · [License](#license) · [Contact](#contact)
 
-The source here is [GPL-3.0-only](LICENSE), with the linking exception described below. The Koder kernel is proprietary, comes from the official site, and is not included in this repository. See [License](#license).
+The source here is [GPL-3.0-only](LICENSE), with the linking exception described below. The Koder kernel is proprietary, ships as a separate release asset, and is not included in this repository. See [License](#license).
 
 ![Opening screen](docs/media/01-splash.png)
 
@@ -42,22 +42,22 @@ Windows 7, Windows 8, and XP cannot install it. Node.js 22 does not run there.
 macOS and Linux:
 
 ```bash
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 ```
 
 Windows PowerShell:
 
 ```powershell
-irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
+irm https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.ps1 | iex
 ```
 
 Windows CMD:
 
 ```bat
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
 ```
 
-If Node.js 22 is not there, the installer brings a private copy.
+Downloads are public and do not need the desktop beta invite cookie. The installer checks the app and kernel archives against the release manifest. If Node.js 22 is not there, it installs a private copy.
 
 When it finishes, Settings opens. Open a new terminal window so `PATH` is current, then:
 
@@ -72,17 +72,19 @@ For the full walkthrough, including chat app setup, see [docs/GUIDE.md](docs/GUI
 
 ### From source
 
-For people changing this repo. You still need the kernel from the official site. It is not in the clone.
+For people changing this repo. You still need the kernel from the official GitHub release. It is not in the clone.
 
 ```bash
 git clone https://github.com/KarmenLoop/karmenbot.git
 cd karmenbot
-node scripts/fetch-kernel.mjs --from https://karmenloop.com/downloads/karmenbot
+npm run fetch-kernel
 npm test
 node bin/karmenbot.mjs
 ```
 
 Node.js 22 or newer. No npm packages to install.
+
+`npm run test:source` checks the public protocol adapters and export boundaries without a kernel. The full `npm test` suite also needs a verified kernel in `vendor/`. A failed kernel download is an installation failure; passing the source checks does not make that installation usable.
 
 ## Docs
 
@@ -102,7 +104,7 @@ Issues and pull requests are welcome. A change to this repository is under GPL-3
 
 Please don’t paste API keys, bot tokens, or pairing codes into an issue. Mail [info@karmenloop.com](mailto:info@karmenloop.com) if it is a security report.
 
-The kernel is not accepted as a pull request here. It is closed, and it ships from the site.
+Kernel development source stays in private repositories. The runtime ships separately under its own license.
 
 ## License
 

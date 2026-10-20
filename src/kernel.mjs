@@ -1,7 +1,7 @@
 // The only file that reaches into vendor/, the Koder kernel (closed source,
 // installed from the official site; see KERNEL-LICENSE.md). The heavy harness
 // loads lazily so the first frame of the TUI is not waiting on it.
-export { RESET, bg, colorDepth, fg, gradientText, mix, scale, spectrum, to16, to256 } from "../vendor/koder-cli/src/color.mjs";
+export { RESET, bg, colorDepth, fg, gradientText, mix, scale, to16, to256 } from "../vendor/koder-cli/src/color.mjs";
 export { diagnosticFetch, exitCode, runPrompt, unreachable } from "../vendor/koder-cli/src/turn.mjs";
 export { normalizeDecision } from "../vendor/koder-cli/src/policy.mjs";
 export { mascotLines, renderMascot } from "../vendor/koder-cli/src/mascot.mjs";

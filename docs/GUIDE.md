@@ -48,19 +48,19 @@ Paste one line and press Enter.
 macOS or Linux, paste with `⌘V` on macOS and `Ctrl+Shift+V` on Linux:
 
 ```bash
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh | sh
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 ```
 
 Windows PowerShell, paste with `Ctrl+V` or right-click:
 
 ```powershell
-irm https://karmenloop.com/downloads/karmenbot/install.ps1 | iex
+irm https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.ps1 | iex
 ```
 
 Windows CMD:
 
 ```bat
-curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
+curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
 ```
 
 Pages: [Download](https://karmenloop.com/download.html) · [Updates](https://karmenloop.com/updates.html) · [Product](https://karmenloop.com/karmen-bot.html)

@@ -8,9 +8,9 @@ Site: [karmenloop.com](https://karmenloop.com) · Email: [info@karmenloop.com](m
 
 | System | Command |
 |---|---|
-| macOS, Linux | `curl -fsSL https://karmenloop.com/downloads/karmenbot/install.sh \| sh` |
-| Windows PowerShell | `irm https://karmenloop.com/downloads/karmenbot/install.ps1 \| iex` |
-| Windows CMD | `curl -fsSL https://karmenloop.com/downloads/karmenbot/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd` |
+| macOS, Linux | `curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh \| sh` |
+| Windows PowerShell | `irm https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.ps1 \| iex` |
+| Windows CMD | `curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd` |
 
 [Download](https://karmenloop.com/download.html) · [Updates](https://karmenloop.com/updates.html)
 
@@ -104,6 +104,6 @@ Confirmation is the same as in the full screen. `karmenbot doctor` checks Node, 
 
 ## 7. Kernel
 
-The kernel is **not public**. Its source is not in this repository. Install downloads it from the [official download address](https://karmenloop.com/downloads/karmenbot), checks it, and places it in `vendor/`. The terms are `KERNEL-LICENSE.md`.
+The kernel is **not public**. Its source is not in this repository. Install downloads it from the [official download address](https://github.com/KarmenLoop/karmenbot/releases/latest/download), checks it, and places it in `vendor/`. The terms are `KERNEL-LICENSE.md`.
 
 Everything else in this repository is GPL-3.0-only. The text is `LICENSE` at the repository root.

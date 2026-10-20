@@ -6,6 +6,7 @@ the license shown; the full license texts follow.
 | Project | Used for | License |
 |---|---|---|
 | Koder kernel (agent harness, tools, model catalog, terminal helpers and the KARMEN glass-ring renderer) | Installed into `vendor/` from the official site; **not part of this repository and not open source** | Koder Kernel License (`KERNEL-LICENSE.md`) |
+| Koder CLI terminal helpers | Unmodified JavaScript helpers in the runtime asset, with their original license and notices in `vendor/koder-cli/` | GPL-3.0-only, with the original kernel exception |
 | Hermes Agent, © 2025 Nous Research | Mixture-of-Agents design; WeCom, DingTalk, Feishu and WeChat (iLink) wire protocols; pairing and chat approval conventions | MIT |
 | OpenClaw, © 2026 OpenClaw Foundation | Feishu app-registration flow and channel conventions (reference only) | MIT |
 | QR Code generator library, © Project Nayuki | Structure of `src/gateway/qr.mjs` | MIT |
