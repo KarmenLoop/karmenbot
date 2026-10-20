@@ -84,6 +84,8 @@ node bin/karmenbot.mjs
 
 Node.js 22 or newer. No npm packages to install.
 
+`npm run test:source` checks the public protocol adapters and export boundaries without a kernel. The full `npm test` suite also needs a verified kernel in `vendor/`. A failed kernel download is an installation failure; passing the source checks does not make that installation usable.
+
 ## Docs
 
 | | |

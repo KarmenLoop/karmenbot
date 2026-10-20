@@ -31,15 +31,21 @@ const runs = (lines) => lines.slice(0, -2).map((_, i) => lines.slice(i, i + 3).j
 // Overlaps reviewed by hand: reading the kernel's event stream is written the
 // same way in the kernel's own printer. Exact text only; anything new is refused.
 const REVIEWED = new Set([
+  // Generic Error fields also occur in the closed runtime; no implementation
+  // logic is shared by this constructor sequence.
+  "super(message);\nthis.status = status;\nthis.code = code;",
   "return;\nif (event.type === \"message\") {\nconst message = event.message;",
   "if (event.type === \"message\") {\nconst message = event.message;\nif (message.role === \"assistant\") {",
 ]);
 
 export function kernelPrints(root) {
   const prints = { runs: new Set(), long: new Set() };
-  const vendor = path.join(root, "vendor");
+  // CLI glue and license notices are distributed source, not proprietary
+  // kernel code. Fingerprint executable files from the closed runtime only.
+  const vendor = path.join(root, "vendor", "koder-desktop");
   if (!fs.existsSync(vendor)) return prints;
   for (const file of walk(vendor)) {
+    if (!file.endsWith(".mjs") || path.relative(vendor, file).split(path.sep).includes("ecosystem")) continue;
     const lines = codeLines(fs.readFileSync(file, "utf8"));
     for (const run of runs(lines)) if (!REVIEWED.has(run)) prints.runs.add(run);
     for (const line of lines) if (line.length >= 80) prints.long.add(line);

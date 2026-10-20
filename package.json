@@ -14,6 +14,7 @@
   "scripts": {
     "test": "node --test --test-timeout=60000 test/*.test.mjs",
     "fetch-kernel": "node scripts/fetch-kernel.mjs",
-    "release": "node scripts/build-release.mjs"
+    "release": "node scripts/build-release.mjs",
+    "test:source": "node --test --test-timeout=60000 test/kernel-export.test.mjs test/kernel-fetch.test.mjs test/platforms.test.mjs"
   }
 }
