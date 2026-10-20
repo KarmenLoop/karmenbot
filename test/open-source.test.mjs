@@ -94,7 +94,7 @@ test("a clone without the kernel explains itself; fetch-kernel installs it from 
   t.after(() => older.close());
   const mismatch = await node(["scripts/fetch-kernel.mjs", "--from", older.url], tree);
   assert.equal(mismatch.status, 1);
-  assert.match(mismatch.out, /官网的内核对应 karmenbot 0\.0\.9，这份源码是 0\.1\.0/);
+  assert.match(mismatch.out, /官网的内核对应 karmenbot 0\.0\.9，这份源码是 0\.1\.1/);
 
   const official = await site(dist);
   t.after(() => official.close());
@@ -104,5 +104,5 @@ test("a clone without the kernel explains itself; fetch-kernel installs it from 
   assert.deepEqual(await fs.readFile(path.join(tree, "vendor", "MANIFEST.json")), await fs.readFile(path.join(pkg, "vendor", "MANIFEST.json")));
   const ready = await node(["bin/karmenbot.mjs", "--version"], tree);
   assert.equal(ready.status, 0, ready.out);
-  assert.equal(ready.out.trim(), "karmenbot 0.1.0");
+  assert.equal(ready.out.trim(), "karmenbot 0.1.1");
 });

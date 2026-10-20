@@ -56,7 +56,7 @@ const writeCall = { text: "准备写。", toolCalls: [{ id: "c1", name: "write_f
 test("the first frame shows the glass-ring banner, header and composer, and quitting restores the terminal", async (t) => {
   const app = await setup(t, { provider: scripted({ text: "", toolCalls: [] }) });
   const screen = app.screen();
-  assert.match(screen, /KARMENBOT v0\.1\.0/);
+  assert.match(screen, /KARMENBOT v0\.1\.1/);
   assert.match(screen, /◆ KARMEN/);
   assert.match(screen, /[▀▄]{4}/, "the glass ring logo is drawn");
   assert.doesNotMatch(screen, /[╱╲]/, "no triangle prism (no mountains, no trees)");
@@ -78,7 +78,7 @@ test("the way in: the splash lists real loading steps, ends on its own, and a ke
   const open = (term) => runTui({ stdin: term.stdin, stdout: term.stdout, env: { KARMENBOT_HOME: home }, cwd: dir, home: "", splash: true, depth: "truecolor", providerOverride: scripted({ text: "", toolCalls: [] }) });
   const first = fakeTerminal();
   const done = open(first);
-  await until(() => first.vt.text().includes("KARMEN · 正在点亮 v0.1.0"), "splash frame");
+  await until(() => first.vt.text().includes("KARMEN · 正在点亮 v0.1.1"), "splash frame");
   for (const step of ["唤醒内核", "读取配置", "连接模型", "聊天平台", "点亮界面"]) assert.match(first.vt.text(), new RegExp(step));
   await until(() => first.vt.text().includes("告诉 Karmen 要做什么"), "splash ends by itself", 5000);
   for (let i = 0; i < 3; i += 1) first.type("\x03");

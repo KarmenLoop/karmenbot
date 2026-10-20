@@ -57,7 +57,7 @@ curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/inst
 ```text
 ✓ 1  检查系统      macOS 15 · arm64
 ✓ 2  准备 Node.js   系统自带 v22.x，或自动下载一份私用的
-✓ 3  获取发布信息   karmenbot 0.1.0
+✓ 3  获取发布信息   karmenbot 0.1.1
 ✓ 4  下载安装包     204 KB · SHA-256 已校验
 ✓ 5  安装           启动命令就位
 ✓ 6  加入 PATH      ~/.zshrc

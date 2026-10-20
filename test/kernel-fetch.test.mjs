@@ -19,7 +19,7 @@ async function checkRejectedKernel(t, { missingLicense = false } = {}) {
   fs.copyFileSync(path.join(pkg, "scripts/fetch-kernel.mjs"), path.join(app, "scripts/fetch-kernel.mjs"));
   fs.copyFileSync(path.join(pkg, "src/version.mjs"), path.join(app, "src/version.mjs"));
   fs.writeFileSync(path.join(app, "vendor/keep.txt"), "current kernel");
-  const name = "karmenbot-kernel-0.1.0";
+  const name = "karmenbot-kernel-0.1.1";
   const source = path.join(root, name);
   fs.mkdirSync(path.join(source, "vendor"), { recursive: true });
   const fixture = "export {};\n";
@@ -31,7 +31,7 @@ async function checkRejectedKernel(t, { missingLicense = false } = {}) {
   const tar = spawnSync("tar", ["-czf", archivePath, "-C", root, name], { encoding: "utf8" });
   assert.equal(tar.status, 0, tar.stderr);
   const archive = fs.readFileSync(archivePath);
-  const latest = JSON.stringify({ version: "0.1.0", kernel: { file: name + ".tar.gz", sha256: crypto.createHash("sha256").update(archive).digest("hex") } });
+  const latest = JSON.stringify({ version: "0.1.1", kernel: { file: name + ".tar.gz", sha256: crypto.createHash("sha256").update(archive).digest("hex") } });
   const server = http.createServer((req, res) => res.end(req.url.endsWith("latest.json") ? latest : archive));
   await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
   t.after(() => new Promise(resolve => server.close(resolve)));

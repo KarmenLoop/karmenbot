@@ -93,7 +93,7 @@ test("gateway start → chat task → approval in chat → file written → gate
   assert.match(stop.out.read(), /网关已停止/);
   await assert.rejects(fs.access(path.join(home, "gateway.pid")));
   const log = await fs.readFile(path.join(home, "logs", "gateway.log"), "utf8");
-  assert.match(log, /karmenbot gateway 0\.1\.0 · telegram · Mock/);
+  assert.match(log, /karmenbot gateway 0\.1\.1 · telegram · Mock/);
   assert.match(log, /unpaired sender 99 code=[A-Z0-9]{8}/);
   assert.match(log, /gateway stopped/);
   assert.ok(!log.includes("123:abc"), "the bot token never reaches the log");

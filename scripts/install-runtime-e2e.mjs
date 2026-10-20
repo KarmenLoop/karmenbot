@@ -89,7 +89,7 @@ try {
   results.tamperedNothingInstalled = !fs.existsSync(path.join(fresh, ".local", "bin", "karmenbot"));
   server.close();
   console.log(JSON.stringify(results, null, 2));
-  const ok = results.installExit === 0 && results.privateRuntime && results.launcherUsesRuntime && results.version === "karmenbot 0.1.0" && results.doctorKernel && results.bashProfile && results.tamperedNodeRefused && results.tamperedNothingInstalled;
+  const ok = results.installExit === 0 && results.privateRuntime && results.launcherUsesRuntime && results.version === "karmenbot 0.1.1" && results.doctorKernel && results.bashProfile && results.tamperedNodeRefused && results.tamperedNothingInstalled;
   process.exitCode = ok ? 0 : 1;
 } finally {
   fs.rmSync(root, { recursive: true, force: true });
