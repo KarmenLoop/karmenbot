@@ -49,7 +49,7 @@ try {
   assert.equal(install.code, 0, install.stdout + install.stderr);
   receipt.checks.push({name: 'public installer', exit_code: install.code, version: manifest.version});
   const launcher = process.platform === 'win32' ? path.join(kbHome,'bin','karmenbot.cmd') : path.join(home,'bin','karmenbot');
-  await fs.access(launcher);
+  try { await fs.access(launcher); } catch { throw new Error(`Installer did not create ${launcher}.\n${install.stdout}\n${install.stderr}`); }
   const cli = args => process.platform === 'win32'
     ? run('powershell.exe',['-NoProfile','-Command',`& ${[launcher,...args].map(quotePS).join(' ')}; exit $LASTEXITCODE`])
     : run(launcher,args);
