@@ -6,6 +6,10 @@ on:
         description: Published release download URL
         required: true
         default: https://github.com/KarmenLoop/karmenbot/releases/latest/download
+      draft_tag:
+        description: Optional draft release to check before publication
+        required: false
+        default: ''
 permissions:
   contents: read
 jobs:
@@ -23,10 +27,29 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node scripts/verify-install.mjs --base-url "$KARMENBOT_ACCEPTANCE_URL" --output installation.json
+      - name: Download draft assets
+        if: inputs.draft_tag != ''
+        run: gh release download "$KARMENBOT_DRAFT_TAG" --repo "$GITHUB_REPOSITORY" --dir "$RUNNER_TEMP/karmenbot-assets"
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KARMENBOT_DRAFT_TAG: ${{ inputs.draft_tag }}
+      - name: Verify native installation and file tools
+        run: |
+          if [[ -n "$KARMENBOT_DRAFT_TAG" ]]; then
+            node -e 'const http=require("http"),fs=require("fs"),path=require("path"); http.createServer((req,res)=>fs.readFile(path.join(process.argv[1],path.basename(new URL(req.url,"http://localhost").pathname)),(err,data)=>err?res.writeHead(404).end():res.end(data))).listen(48732,"127.0.0.1")' "$RUNNER_TEMP/karmenbot-assets" &
+            server=$!
+            trap 'kill "$server"' EXIT
+            export KARMENBOT_DIST_URL=http://127.0.0.1:48732
+            node -e 'const end=Date.now()+10000; (async()=>{for(;;){try{const r=await fetch("http://127.0.0.1:48732/latest.json");if(r.ok)return}catch{}if(Date.now()>end)throw Error("Draft server did not start");await new Promise(r=>setTimeout(r,100))}})()'
+            node scripts/verify-install.mjs --base-url "$KARMENBOT_DIST_URL" --output installation.json
+          else
+            node scripts/verify-install.mjs --base-url "$KARMENBOT_ACCEPTANCE_URL" --output installation.json
+          fi
         shell: bash
         env:
           KARMENBOT_ACCEPTANCE_URL: ${{ inputs.base_url }}
+          KARMENBOT_DRAFT_TAG: ${{ inputs.draft_tag }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
