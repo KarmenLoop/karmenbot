@@ -1,5 +1,7 @@
 # karmenbot
 
+English | [简体中文](README.zh-CN.md)
+
 karmenbot is KARMEN's full-screen terminal assistant. Open it in a folder, connect a model, and describe the work. It shows file changes and commands for approval before carrying them out.
 
 [Quick start](#quick-start) · [Platforms](#platforms) · [Docs](#docs) · [Contributing](#contributing) · [License](#license) · [Contact](#contact)
