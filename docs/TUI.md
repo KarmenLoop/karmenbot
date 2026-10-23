@@ -104,6 +104,6 @@ Confirmation is the same as in the full screen. `karmenbot doctor` checks Node, 
 
 ## 7. Kernel
 
-The kernel is **not public**. Its source is not in this repository. Install downloads it from the [official download address](https://github.com/KarmenLoop/karmenbot/releases/latest/download), checks it, and places it in `vendor/`. The terms are `KERNEL-LICENSE.md`.
+The kernel source is private and is not included in this repository. The installer downloads the separately licensed runtime from the [official release](https://github.com/KarmenLoop/karmenbot/releases/latest), verifies it, and places it in `vendor/`. Its terms are in `KERNEL-LICENSE.md`.
 
 Everything else in this repository is GPL-3.0-only. The text is `LICENSE` at the repository root.
