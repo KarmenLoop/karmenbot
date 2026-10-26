@@ -1,6 +1,6 @@
 import { asksWhoMadeIt, identityText } from "../official.mjs";
 import { sanitize } from "../tui/text.mjs";
-import { chunkText, readChoice, readVerdict } from "./text.mjs";
+import { chunkText, readChoice, readVerdict, readSendVerdict } from "./text.mjs";
 
 // The gateway: every chat platform feeds normalized messages in here.
 //   inbound: { chatId, userId, userName, text, isGroup, mentioned, messageId, reply }
@@ -8,6 +8,10 @@ import { chunkText, readChoice, readVerdict } from "./text.mjs";
 // DingTalk session webhook, WeChat context token, ...).
 // Each chat is one Karmen conversation; edits and commands wait for the same
 // person to answer 批准 / 拒绝 in that chat, and time out to "no".
+//
+// When draftThenSend is on (default), assistant replies are held as one draft
+// after the turn; the same user confirms with 发送/批准/y before the final send.
+// Notices, pairing, help, and decide prompts always send immediately.
 
 const COMMANDS = {
   "/new": "new", "/新会话": "new", "/reset": "new",
@@ -21,7 +25,16 @@ function preview(diff, limit = 18) {
   return rows.join("\n");
 }
 
-export function createGateway({ agent, adapters, pairing, t, log = () => {}, approvalTimeoutMs = 300_000, groupPolicy = "mention" }) {
+export function createGateway({
+  agent,
+  adapters,
+  pairing,
+  t,
+  log = () => {},
+  approvalTimeoutMs = 300_000,
+  groupPolicy = "mention",
+  draftThenSend = true,
+} = {}) {
   const chats = new Map();
   const controller = new AbortController();
 
@@ -61,6 +74,24 @@ export function createGateway({ agent, adapters, pairing, t, log = () => {}, app
     });
   }
 
+  /** Hold assistant text as a draft; user confirms before the final send. */
+  async function releaseDraft(chat, msg, body) {
+    const text = sanitize(body);
+    if (!text) return { sent: false, drafted: false };
+    if (!draftThenSend) {
+      await send(chat.platform, msg, text);
+      return { sent: true, drafted: false };
+    }
+    const card = `${t("gw.draftHeader")}\n\n${text}\n\n${t("gw.draftHint")}`;
+    const verdict = await ask(chat, msg, card, (reply) => readSendVerdict(reply));
+    if (verdict === "approve") {
+      await send(chat.platform, msg, text);
+      return { sent: true, drafted: true };
+    }
+    await send(chat.platform, msg, t("gw.draftCancelled"));
+    return { sent: false, drafted: true };
+  }
+
   function decider(chat, msg) {
     return async (pause) => {
       if (pause.kind === "secret") {
@@ -89,13 +120,17 @@ export function createGateway({ agent, adapters, pairing, t, log = () => {}, app
   async function runTurn(chat, msg) {
     chat.busy = true;
     chat.last = msg;
+    const draftParts = [];
     try {
       const convo = await agent.conversation(chat.key);
       const outcome = await convo.turn(msg.text, {
         decide: decider(chat, msg),
         onEvent(event) {
           if (event.type === "message" && event.message.role === "assistant" && String(event.message.content || "").trim()) {
-            send(chat.platform, msg, sanitize(event.message.content));
+            const piece = sanitize(event.message.content);
+            if (!piece) return;
+            if (draftThenSend) draftParts.push(piece);
+            else send(chat.platform, msg, piece);
           } else if (event.type === "message" && event.message.role === "notice") {
             send(chat.platform, msg, event.message.code === "API_UNREACHABLE" ? t("gw.unreachable") : sanitize(event.message.content));
           } else if (event.type === "decision" && !event.decision.cancel && event.pause.kind !== "choice") {
@@ -105,6 +140,7 @@ export function createGateway({ agent, adapters, pairing, t, log = () => {}, app
           }
         },
       });
+      if (draftParts.length) await releaseDraft(chat, msg, draftParts.join("\n\n"));
       log("info", `${chat.key} turn done code=${outcome.code}`);
     } catch (error) {
       log("error", `${chat.key} turn failed: ${error?.stack || error}`);
@@ -118,7 +154,10 @@ export function createGateway({ agent, adapters, pairing, t, log = () => {}, app
 
   async function command(chat, msg, name) {
     if (name === "help") return send(chat.platform, msg, t("gw.help"));
-    if (name === "status") return send(chat.platform, msg, t("gw.status", { model: agent.current?.label || t("side.noModel"), busy: chat.busy ? t("gw.busyYes") : t("gw.busyNo") }));
+    if (name === "status") {
+      const draft = draftThenSend ? t("gw.draftOn") : t("gw.draftOff");
+      return send(chat.platform, msg, `${t("gw.status", { model: agent.current?.label || t("side.noModel"), busy: chat.busy ? t("gw.busyYes") : t("gw.busyNo") })} · ${draft}`);
+    }
     if (name === "stop") {
       chat.queue.length = 0;
       if (chat.pending) chat.pending.resolve(null);
@@ -163,6 +202,9 @@ export function createGateway({ agent, adapters, pairing, t, log = () => {}, app
   return {
     handle,
     chats,
+    get draftThenSend() {
+      return draftThenSend;
+    },
     async start() {
       const started = [];
       for (const [name, adapter] of Object.entries(adapters)) {

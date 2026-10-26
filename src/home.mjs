@@ -5,7 +5,10 @@ import path from "node:path";
 // Everything karmenbot keeps lives under one folder, separate from Koder:
 //   config.json   preferences, models (no keys), MoA presets, gateway settings,
 //                 mcp.servers[] (id, command, args, env, enabled, preset);
-//                 memory: { backend: "local"|"mem0", remote: false, enabled, injectTopK }
+//                 memory: { backend: "local"|"mem0", remote: false, enabled, injectTopK };
+//                 gateway.draftThenSend (default true): hold assistant replies as a
+//                 draft until the user confirms with 发送/批准/y; set false for
+//                 legacy immediate send.
 //   secrets.json  API keys and platform credentials, mode 600;
 //                 secrets.mcp.<serverId> may hold env keys for MCP servers
 //   memory/       L0 workspace sessions + L1 profile.json / journal/*.jsonl

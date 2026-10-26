@@ -34,7 +34,7 @@ async function runForeground(ctx) {
   const agent = await openAgent({ workspace, env, model, moa: resolveMoa(config), providerOverride: ctx.io.providerOverride, fetchImpl: ctx.io.fetchImpl });
   const stateDir = path.join(karmenHome(env), "state");
   const adapters = Object.fromEntries(platforms.map(({ name, settings, secrets }) => [name, PLATFORMS[name].create({ settings, secrets, fetchImpl: ctx.io.fetchImpl || globalThis.fetch, WebSocketImpl: ctx.io.WebSocketImpl || globalThis.WebSocket, stateDir })]));
-  const gateway = createGateway({ agent, adapters, pairing: createPairing({ env }), t, log, groupPolicy: config.gateway?.groupPolicy || "mention", approvalTimeoutMs: ctx.io.approvalTimeoutMs });
+  const gateway = createGateway({ agent, adapters, pairing: createPairing({ env }), t, log, groupPolicy: config.gateway?.groupPolicy || "mention", approvalTimeoutMs: ctx.io.approvalTimeoutMs, draftThenSend: config.gateway?.draftThenSend !== false });
   fs.mkdirSync(karmenHome(env), { recursive: true, mode: 0o700 });
   fs.writeFileSync(pidFile(env), String(process.pid));
   log("info", `karmenbot gateway ${ctx.version} · ${platforms.map((item) => item.name).join(", ")} · ${agent.current?.label || "no model"} · workspace ${workspace}`);
