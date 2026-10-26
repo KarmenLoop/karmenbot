@@ -49,7 +49,7 @@ export async function run(ctx) {
   if (!model && !ctx.io.providerOverride) throw new KarmenError("model.notConfigured");
   const moa = resolveMoa(loadConfig(env));
   if (opts.moa !== undefined) moa.enabled = opts.moa;
-  const agent = await openAgent({ workspace: ctx.workspace, env, model, moa, providerOverride: ctx.io.providerOverride, fetchImpl: ctx.io.fetchImpl });
+  const agent = await openAgent({ workspace: ctx.workspace, env, model, moa, providerOverride: ctx.io.providerOverride, fetchImpl: ctx.io.fetchImpl, noMemory: Boolean(opts.noMemory), lang: t.lang === "en" ? "en" : "zh" });
   const convo = await agent.conversation(opts.session || "ask", { mode: opts.mode || "standard" });
   const prompter = stdin.isTTY ? createPrompter({ input: stdin, output: stderr }) : null;
 
@@ -79,6 +79,7 @@ export async function run(ctx) {
     interaction: opts.interaction || "agent",
     decide,
     yes: Boolean(opts.yes),
+    noMemory: Boolean(opts.noMemory),
     onEvent(event) {
       if (opts.json) {
         stdout.write(`${JSON.stringify(event.type === "message" ? { type: event.message.role, text: event.message.content || "", name: event.message.name } : event)}\n`);

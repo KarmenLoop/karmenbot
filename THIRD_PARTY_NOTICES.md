@@ -12,6 +12,7 @@ the license shown; the full license texts follow.
 | QR Code generator library, © Project Nayuki | Structure of `src/gateway/qr.mjs` | MIT |
 | Playwright MCP (`@playwright/mcp`), © Microsoft Corporation | Optional browser MCP preset (`npx @playwright/mcp`); not bundled in this repo | Apache-2.0 |
 | Model Context Protocol reference servers (filesystem, fetch), © Anthropic PBC and contributors | Optional MCP presets via `npx`; not bundled | MIT |
+| mem0, © Mem0, Inc. and contributors | API shape inspiration for local `src/memory/mem0-client.mjs`; package not vendored; optional remote remains off by default | Apache-2.0 |
 
 OpenHuman (GPL-3.0) was studied for product ideas only; no OpenHuman code is
 included.
@@ -39,3 +40,7 @@ SOFTWARE.
 ## Apache License 2.0 (Playwright MCP)
 
 Playwright MCP is used as an optional external process (`npx @playwright/mcp`). It is not vendored into this repository. See https://github.com/microsoft/playwright-mcp for the full Apache-2.0 license text.
+
+## Apache License 2.0 (mem0)
+
+mem0 is not bundled in this repository. The local memory client only mirrors a small add/search/update surface. If you enable a remote mem0 deployment later, see https://github.com/mem0ai/mem0 for the Apache-2.0 license text.

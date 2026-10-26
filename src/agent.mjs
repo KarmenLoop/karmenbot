@@ -5,15 +5,19 @@ import { createMoaProvider } from "./moa.mjs";
 import { IDENTITY_RULES } from "./official.mjs";
 import { createRegistry } from "./mcp/registry.mjs";
 import { wrapDecide } from "./mcp/bridge.mjs";
+import { buildInjection } from "./memory/inject.mjs";
+import { loadConfig } from "./home.mjs";
 
 // One kernel per workspace; conversations are keyed ("tui", "feishu:oc_123", ...).
 // The kernel gets a stable provider that delegates to whatever is current, so
 // /moa and /model switch without rebuilding anything.
-export async function openAgent({ workspace, env = process.env, model = null, moa = null, providerOverride = null, fetchImpl, onProgress = () => {} }) {
+export async function openAgent({ workspace, env = process.env, model = null, moa = null, providerOverride = null, fetchImpl, onProgress = () => {}, noMemory = false, lang = null } = {}) {
   const started = performance.now();
   const kernel = await loadKernel();
   const diag = diagnosticFetch(fetchImpl || globalThis.fetch);
   let current = null;
+  let pendingMemory = "";
+  const uiLang = lang || (loadConfig(env).lang === "en" ? "en" : "zh");
 
   function build(nextModel, nextMoa) {
     if (providerOverride) return { provider: providerOverride, record: null, label: providerOverride.name || "override", moa: false };
@@ -42,7 +46,10 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
       if (!current) return Promise.reject(Object.assign(new Error("no model configured"), { code: "NO_MODEL" }));
       const messages = Array.isArray(request?.messages) ? request.messages.map((message) => ({ ...message })) : request?.messages;
       const system = Array.isArray(messages) ? messages.find((message) => message.role === "system") : null;
-      if (system && !String(system.content).includes("karmenloop.com")) system.content = `${system.content}\n${IDENTITY_RULES}`;
+      if (system) {
+        if (!String(system.content).includes("karmenloop.com")) system.content = `${system.content}\n${IDENTITY_RULES}`;
+        if (pendingMemory) system.content = `${system.content}\n\n${pendingMemory}`;
+      }
       return current.provider.complete(system ? { ...request, messages } : request);
     },
   };
@@ -108,10 +115,16 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
       get busy() {
         return busy;
       },
-      async turn(text, { mode: turnMode, interaction = "agent", decide, onEvent, yes = false }) {
+      async turn(text, { mode: turnMode, interaction = "agent", decide, onEvent, yes = false, noMemory: turnNoMemory } = {}) {
         busy = true;
         diag.state.last = null;
         try {
+          const skip = turnNoMemory !== undefined ? turnNoMemory : noMemory;
+          const injection = await buildInjection({ query: text, env, lang: uiLang, noMemory: skip, session: key === "none" ? "none" : key });
+          pendingMemory = injection.block || "";
+          if (pendingMemory && typeof onEvent === "function") {
+            onEvent({ type: "message", message: { role: "notice", content: uiLang === "en" ? `Memory: ${injection.hits.length} fact(s) loaded` : `记忆：已载入 ${injection.hits.length} 条` } });
+          }
           const gated = wrapDecide(decide, { yes });
           const outcome = await runPrompt({ harness, watch, thread, text, mode: turnMode, interaction, decide: gated, onEvent });
           let detail = "";
@@ -119,6 +132,7 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
           if (unreachable(outcome.thread) && last) detail = `${last.status ? `HTTP ${last.status}` : last.error}${last.host ? ` · ${last.host}` : ""}`;
           return { ...outcome, code: exitCode(outcome), detail };
         } finally {
+          pendingMemory = "";
           busy = false;
         }
       },

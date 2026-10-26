@@ -10,6 +10,7 @@ const ZH = `karmenbot {version}
   karmenbot flow 步骤.json          按 JSON 依次 ask / run / shell
   karmenbot ci init                写入 GitHub Actions 审查工作流
   karmenbot memory show|search|add|remove|clear|forget
+  karmenbot memory profile|journal|status|propose   全局画像 / 日记 / 状态
   karmenbot editor zed|nvim|emacs  打印编辑器接入片段（配合 karmenbot acp）
   karmenbot model presets|set|context|list|add|use|test
   karmenbot settings               设置中心（也可以输入 karmenbot 设置）：方向键或鼠标点选，配好模型、平台、网关
@@ -53,6 +54,7 @@ Usage
   karmenbot flow steps.json        ask / run / shell steps
   karmenbot ci init                GitHub Actions review workflow
   karmenbot memory show|search|add|remove|clear|forget
+  karmenbot memory profile|journal|status|propose   global profile / journal / status
   karmenbot editor zed|nvim|emacs  editor snippets for karmenbot acp
   karmenbot model presets|set|context|list|add|use|test
   karmenbot settings              settings centre: arrows or mouse for models, chat apps, gateway
