@@ -23,4 +23,11 @@ In `~/.karmenbot/config.json`:
 
 Unset or `true` keeps draft-then-send on (the default for new installs). `/status` shows `草稿确认：开/关`.
 
-This PR does **not** add a “just send / don’t draft” bypass phrase; confirm is always required while the flag is on. Edit-before-send is deferred past MVP.
+Confirm is always required while the flag is on.
+
+## Proactive follow-ups
+
+See [FOLLOWUPS.md](./FOLLOWUPS.md) for the durable follow-up queue
+(`gateway followup` / `gateway tick`), draft-safe defaults, rate limits, and quiet hours.
+
+Chat pairing, platforms, and background service install remain as described in GUIDE.md.
