@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { createGateway } from "../src/gateway/core.mjs";
+import { readDraftAction, readSendVerdict } from "../src/gateway/text.mjs";
 import { createPairing } from "../src/gateway/pairing.mjs";
 import { createT } from "../src/i18n.mjs";
 import { until } from "./vt.mjs";
@@ -118,4 +119,57 @@ test("createGateway defaults draftThenSend to on", () => {
     t: createT("zh"),
   });
   assert.equal(gateway.draftThenSend, true);
+});
+
+test("readDraftAction parses send deny replace append", () => {
+  assert.deepEqual(readDraftAction("发送"), { action: "send" });
+  assert.deepEqual(readDraftAction("y"), { action: "send" });
+  assert.deepEqual(readDraftAction("拒绝"), { action: "deny" });
+  assert.deepEqual(readDraftAction("改 新正文"), { action: "replace", body: "新正文" });
+  assert.deepEqual(readDraftAction("修改：替换稿"), { action: "replace", body: "替换稿" });
+  assert.deepEqual(readDraftAction("edit: hello"), { action: "replace", body: "hello" });
+  assert.deepEqual(readDraftAction("/edit  world"), { action: "replace", body: "world" });
+  assert.deepEqual(readDraftAction("+ 尾巴"), { action: "append", body: "尾巴" });
+  assert.deepEqual(readDraftAction("追加 more"), { action: "append", body: "more" });
+  assert.equal(readDraftAction("editor says hi"), null);
+  assert.equal(readDraftAction("改"), null);
+  assert.equal(readSendVerdict("发送"), "approve");
+});
+
+test("draft replace then send delivers edited body only", async (t) => {
+  const g = await draftGateway(t, { replyText: "原稿" });
+  g.adapter.deliver({ text: "写一句" });
+  await g.saw("【待发送草稿】");
+  await g.saw("原稿");
+  g.adapter.deliver({ text: "改 编辑后的稿" });
+  await g.saw("编辑后的稿");
+  // Edit alone must not final-send.
+  assert.equal(g.adapter.texts().filter((x) => x === "编辑后的稿").length, 0);
+  assert.equal(g.adapter.texts().filter((x) => x === "原稿").length, 0);
+  g.adapter.deliver({ text: "发送" });
+  await until(() => g.adapter.texts().filter((x) => x === "编辑后的稿").length === 1, "edited send");
+  assert.equal(g.adapter.texts().filter((x) => x === "原稿").length, 0);
+});
+
+test("draft append then deny never delivers body alone", async (t) => {
+  const g = await draftGateway(t, { replyText: "开头" });
+  g.adapter.deliver({ text: "写" });
+  await g.saw("【待发送草稿】");
+  g.adapter.deliver({ text: "+ 续写" });
+  await until(() => g.adapter.texts().some((x) => x.includes("开头") && x.includes("续写")), "appended card");
+  g.adapter.deliver({ text: "拒绝" });
+  await g.saw("已取消发送");
+  assert.equal(g.adapter.texts().filter((x) => x === "开头").length, 0);
+  assert.equal(g.adapter.texts().filter((x) => x === "开头\n续写").length, 0);
+});
+
+test("draft edit alone does not final-send", async (t) => {
+  const g = await draftGateway(t, { replyText: "勿发" });
+  g.adapter.deliver({ text: "请写" });
+  await g.saw("【待发送草稿】");
+  g.adapter.deliver({ text: "edit: still draft" });
+  await g.saw("still draft");
+  await new Promise((r) => setTimeout(r, 80));
+  assert.equal(g.adapter.texts().filter((x) => x === "still draft").length, 0);
+  assert.equal(g.adapter.texts().filter((x) => x === "勿发").length, 0);
 });

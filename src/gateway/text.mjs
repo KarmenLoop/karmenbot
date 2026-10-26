@@ -62,3 +62,35 @@ export function readSendVerdict(text) {
   return readVerdict(text);
 }
 
+// Longer Chinese prefixes first so 「修改」 is not eaten by 「改」.
+const REPLACE_ZH_RE = /^(?:修改|编辑|改)\s*[:：]?\s*([\s\S]+)$/;
+// English needs a space or colon after edit so "editor …" is never an edit.
+const REPLACE_EN_RE = /^(?:\/edit|edit)\s*[:：]\s*([\s\S]+)$/i;
+const REPLACE_EN_SPACE_RE = /^(?:\/edit|edit)\s+([\s\S]+)$/i;
+const APPEND_RE = /^(?:\+|追加)\s+([\s\S]+)$/;
+
+/**
+ * Draft card reply: send | deny | replace | append.
+ * Returns { action, body? } or null when the reply is not a draft action.
+ */
+export function readDraftAction(text) {
+  const raw = String(text ?? "").trim();
+  if (!raw) return null;
+
+  let match = raw.match(APPEND_RE);
+  if (match) {
+    const body = match[1].trim();
+    return body ? { action: "append", body } : null;
+  }
+
+  match = raw.match(REPLACE_ZH_RE) || raw.match(REPLACE_EN_RE) || raw.match(REPLACE_EN_SPACE_RE);
+  if (match) {
+    const body = match[1].trim();
+    return body ? { action: "replace", body } : null;
+  }
+
+  const verdict = readSendVerdict(raw);
+  if (verdict === "approve") return { action: "send" };
+  if (verdict === "deny") return { action: "deny" };
+  return null;
+}

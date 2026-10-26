@@ -1,0 +1,12 @@
+{
+  "id": "daily-brief",
+  "name": "Daily brief",
+  "version": "1.0.0",
+  "description": "Official example: a read-only morning checklist (no shell, network, or writes).",
+  "triggers": ["daily-brief", "brief", "晨间"],
+  "permissions": {
+    "network": false,
+    "shell": false,
+    "write": false
+  }
+}

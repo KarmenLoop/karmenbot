@@ -38,6 +38,7 @@ const ZH = `karmenbot {version}
 
 其他
   karmenbot doctor                 体检：运行环境、内核、模型、平台
+  karmenbot vault list|has|unset    密钥库：只列名称 / 是否存在 / 删除（无 get）
   karmenbot uninstall [--all]      卸载（--all 连同配置和密钥）
   karmenbot version
 
@@ -87,6 +88,7 @@ Chat platforms (Feishu, WeCom, WeChat, DingTalk, Telegram, Slack, Discord, Whats
 
 Other
   karmenbot doctor                check runtime, kernel, models, platforms
+  karmenbot vault list|has|unset   secrets vault: names only / presence / remove (no get)
   karmenbot uninstall [--all]     remove (with --all also config and keys)
   karmenbot version
 

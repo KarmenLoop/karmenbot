@@ -82,9 +82,15 @@ Warnings: declared network/shell/write patterns that are allowed by permissions.
 
 `skill run` ignores `--yes` for shell/write. Without a TTY (or scripted `answers`), those steps are denied.
 
-## Example
+## Examples
 
-See [`examples/skills/demo-readonly`](../examples/skills/demo-readonly).
+```bash
+karmenbot skill install ./examples/skills/demo-readonly
+karmenbot skill install ./examples/skills/daily-brief
+```
+
+- [`examples/skills/demo-readonly`](../examples/skills/demo-readonly) — minimal scan-clean pack
+- [`examples/skills/daily-brief`](../examples/skills/daily-brief) — read-only morning checklist (ask steps only)
 
 ## URL install
 
