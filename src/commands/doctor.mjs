@@ -6,6 +6,7 @@ import { karmenHome, loadConfig, loadSecrets } from "../home.mjs";
 import { listModels } from "../models.mjs";
 import { resolveMoa } from "../moa.mjs";
 import { OFFICIAL } from "../official.mjs";
+import { listConfiguredServers } from "../mcp/registry.mjs";
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -44,5 +45,7 @@ export async function run(ctx) {
   line(null, `${zh ? "查看更新" : "Updates"} ${OFFICIAL.updates}`);
   const platforms = Object.keys(config.gateway?.platforms || {});
   line(null, `${zh ? "聊天平台" : "Platforms"} ${platforms.length ? platforms.join(", ") : zh ? "未接入" : "none"}`);
+  const mcpServers = listConfiguredServers(env);
+  line(null, `MCP ${mcpServers.length ? mcpServers.map((item) => `${item.id}${item.enabled ? "" : "(off)"}`).join(", ") : zh ? "未配置（karmenbot connect playwright）" : "none (karmenbot connect playwright)"}`);
   return vendor.bad.length || major < 22 ? 1 : 0;
 }

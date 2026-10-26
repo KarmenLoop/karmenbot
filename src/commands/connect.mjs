@@ -11,6 +11,51 @@ import { loginWeixin } from "../gateway/platforms/weixin.mjs";
 import { encodeQr, renderQr } from "../gateway/qr.mjs";
 import { createPrompter } from "../prompt.mjs";
 
+import { addPreset, getConfiguredServer } from "../mcp/registry.mjs";
+import { listPresets } from "../mcp/presets.mjs";
+
+async function connectPlaywright(ctx, prompter) {
+  const existing = getConfiguredServer("playwright", ctx.env);
+  if (existing) {
+    prompter.print(pick(ctx, "Playwright MCP 已配置。可用 karmenbot mcp test playwright 试连，或 karmenbot mcp remove playwright 后重装。", "Playwright MCP is already configured. Try karmenbot mcp test playwright, or remove it with karmenbot mcp remove playwright."));
+    return true;
+  }
+  prompter.print(pick(ctx,
+    "将添加官方 Playwright MCP（npx -y @playwright/mcp@latest）。首次会拉包；浏览器能力走 y/n 审批，提交类操作不会被 --yes 绕过。",
+    "This adds the official Playwright MCP (npx -y @playwright/mcp@latest). First run may download packages. Browser tools use y/n approval; submit-class calls are never bypassed by --yes."));
+  const ok = await prompter.confirm(pick(ctx, "现在写入配置吗？[Y/n] ", "Write the config now? [Y/n] "), true);
+  if (!ok) return false;
+  addPreset("playwright", { enabled: true }, ctx.env);
+  prompter.print(pick(ctx, "已写入。试一下：karmenbot mcp test playwright", "Saved. Try: karmenbot mcp test playwright"));
+  prompter.print(pick(ctx, "需要 Chromium 时再运行：npx playwright install chromium", "If Chromium is missing, run: npx playwright install chromium"));
+  return true;
+}
+
+async function connectMcp(ctx, prompter, wantedPreset = null) {
+  if (wantedPreset === "playwright" || ctx.args[0] === "playwright") return connectPlaywright(ctx, prompter);
+  const presets = listPresets();
+  prompter.print(pick(ctx, "可选 MCP 预设：", "MCP presets:"));
+  const labels = presets.map((item) => `${item.id} — ${item.description}`);
+  const index = await prompter.choose(pick(ctx, "输入编号（回车取消）：", "Number (Enter to cancel): "), labels, { allowEmpty: true });
+  if (index < 0) return false;
+  const preset = presets[index];
+  if (preset.id === "playwright") return connectPlaywright(ctx, prompter);
+  if (getConfiguredServer(preset.id, ctx.env)) {
+    prompter.print(pick(ctx, `${preset.id} 已存在。`, `${preset.id} already configured.`));
+    return true;
+  }
+  if (preset.id === "filesystem") {
+    const root = await prompter.ask(pick(ctx, "允许访问的目录（绝对路径）：", "Allowed root directory (absolute path): "));
+    if (!root) return false;
+    addPreset("filesystem", { extraArgs: [root], enabled: true }, ctx.env);
+  } else {
+    addPreset(preset.id, { enabled: true }, ctx.env);
+  }
+  prompter.print(pick(ctx, `已添加 ${preset.id}。karmenbot mcp test ${preset.id}`, `Added ${preset.id}. karmenbot mcp test ${preset.id}`));
+  return true;
+}
+
+
 const pick = (ctx, zh, en) => (ctx.t.lang === "en" ? en : zh);
 
 function showCode(ctx, prompter, url, hint) {
@@ -168,15 +213,26 @@ export async function connectWizard(ctx, prompter, wanted = null) {
 }
 
 export async function run(ctx) {
-  const wanted = ctx.args[0] ? platformName(ctx.args[0]) : null;
-  if (ctx.args[0] && !wanted) throw new KarmenError("gw.unknownPlatform", { name: ctx.args[0] });
-  if (ctx.args[1] === "remove" || ctx.args[1] === "off") {
-    removePlatform(ctx.env, wanted);
-    ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${wanted}\n`);
-    return 0;
-  }
+  const raw = (ctx.args[0] || "").toLowerCase();
   const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
   try {
+    if (raw === "mcp" || raw === "playwright" || raw === "browser") {
+      const preset = raw === "mcp" ? (ctx.args[1] || null) : "playwright";
+      if ((ctx.args[1] === "remove" || ctx.args[1] === "off") && raw === "mcp") {
+        const { removeServer } = await import("../mcp/registry.mjs");
+        removeServer(ctx.args[2] || "playwright", ctx.env);
+        ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${ctx.args[2] || "playwright"}\n`);
+        return 0;
+      }
+      return (await connectMcp(ctx, prompter, preset)) ? 0 : 1;
+    }
+    const wanted = ctx.args[0] ? platformName(ctx.args[0]) : null;
+    if (ctx.args[0] && !wanted) throw new KarmenError("gw.unknownPlatform", { name: ctx.args[0] });
+    if (ctx.args[1] === "remove" || ctx.args[1] === "off") {
+      removePlatform(ctx.env, wanted);
+      ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${wanted}\n`);
+      return 0;
+    }
     return (await connectWizard(ctx, prompter, wanted)) ? 0 : 1;
   } finally {
     prompter.close();
