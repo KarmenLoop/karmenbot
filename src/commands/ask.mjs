@@ -6,6 +6,8 @@ import { activeModel } from "../models.mjs";
 import { resolveMoa } from "../moa.mjs";
 import { asksWhoMadeIt, identityText } from "../official.mjs";
 import { createPrompter } from "../prompt.mjs";
+import { formatMcpPrompt } from "../mcp/bridge.mjs";
+import { mayAutoAccept } from "../mcp/policy.mjs";
 
 // Only a shell pipe or a redirected file counts as input. A socket handed over
 // by a parent process (cron, services, spawn) may never close, and reading it
@@ -53,6 +55,13 @@ export async function run(ctx) {
 
   async function decide(pause) {
     if (pause.kind === "secret") return { cancel: true };
+    // --yes may auto-accept file edits and shell approvals, but NEVER submit-class MCP.
+    if (pause.kind === "mcp") {
+      if (mayAutoAccept(pause.tier, { yes: opts.yes })) return { accept: true, auto: true };
+      if (!prompter) return { accept: false };
+      const label = formatMcpPrompt(pause, t);
+      return { accept: await prompter.confirm(`${label} [y/N] `, false) };
+    }
     if (opts.yes && (pause.kind === "change" || pause.kind === "approval")) return { accept: true };
     if (!prompter) return { accept: false };
     if (pause.kind === "choice") {
@@ -69,6 +78,7 @@ export async function run(ctx) {
     mode: opts.mode,
     interaction: opts.interaction || "agent",
     decide,
+    yes: Boolean(opts.yes),
     onEvent(event) {
       if (opts.json) {
         stdout.write(`${JSON.stringify(event.type === "message" ? { type: event.message.role, text: event.message.content || "", name: event.message.name } : event)}\n`);
@@ -89,9 +99,11 @@ export async function run(ctx) {
         stderr.write(`! ${event.message.code === "API_UNREACHABLE" ? t("tui.unreachable", { detail: "" }) : event.message.content}\n`);
       } else if (event.type === "decision" && !event.decision.cancel) {
         const pause = event.pause;
-        const text = pause.kind === "change"
-          ? t(event.decision.accept ? "dialog.accepted" : "dialog.rejected", { path: pause.path })
-          : pause.kind === "approval" ? t(event.decision.accept ? "dialog.allowed" : "dialog.denied") : t("dialog.picked", { option: pause.options[event.decision.index] });
+        let text;
+        if (pause.kind === "change") text = t(event.decision.accept ? "dialog.accepted" : "dialog.rejected", { path: pause.path });
+        else if (pause.kind === "approval") text = t(event.decision.accept ? "dialog.allowed" : "dialog.denied");
+        else if (pause.kind === "mcp") text = t(event.decision.accept ? "dialog.mcpAllowed" : "dialog.mcpDenied", { name: pause.name || pause.tool });
+        else text = t("dialog.picked", { option: pause.options[event.decision.index] });
         stderr.write(`  ${text}\n`);
       }
     },

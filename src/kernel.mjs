@@ -1,6 +1,10 @@
 // The only file that reaches into vendor/, the Koder kernel (closed source,
 // installed from the official site; see KERNEL-LICENSE.md). The heavy harness
 // loads lazily so the first frame of the TUI is not waiting on it.
+//
+// MCP tools (Wave1) live in src/mcp/* as a public Path B sidecar + decide hooks.
+// There is no public kernel tools-registration API to wrap here; do not reverse
+// engineer vendor/. If a future kernel export appears, add a thin re-export only.
 export { RESET, bg, colorDepth, fg, gradientText, mix, scale, to16, to256 } from "../vendor/koder-cli/src/color.mjs";
 export { diagnosticFetch, exitCode, runPrompt, unreachable } from "../vendor/koder-cli/src/turn.mjs";
 export { normalizeDecision } from "../vendor/koder-cli/src/policy.mjs";

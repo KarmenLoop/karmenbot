@@ -3,6 +3,8 @@ import { diagnosticFetch, exitCode, loadKernel, runPrompt, unreachable } from ".
 import { recordFor } from "./models.mjs";
 import { createMoaProvider } from "./moa.mjs";
 import { IDENTITY_RULES } from "./official.mjs";
+import { createRegistry } from "./mcp/registry.mjs";
+import { wrapDecide } from "./mcp/bridge.mjs";
 
 // One kernel per workspace; conversations are keyed ("tui", "feishu:oc_123", ...).
 // The kernel gets a stable provider that delegates to whatever is current, so
@@ -58,6 +60,24 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
   }
   await apply(model, moa);
 
+  // Path B: public MCP sidecar. Kernel tools API is not exposed; we start
+  // configured servers and hand a registry + decide wrapper to callers.
+  // If a server fails to spawn, degrade with a notice — do not block the agent.
+  let mcp = null;
+  let mcpNotice = null;
+  try {
+    mcp = createRegistry({ env, onEvent: (event) => {
+      if (event.type === "mcp.error") mcpNotice = `MCP ${event.id}: ${event.message}`;
+    } });
+    const started = await mcp.startEnabled();
+    if (started.errors?.length) {
+      mcpNotice = started.errors.map((item) => `${item.id}: ${item.message}`).join("; ");
+    }
+  } catch (error) {
+    mcpNotice = error?.message || String(error);
+    mcp = null;
+  }
+
   const listeners = new Map();
   harness.setUpdateListener((thread) => listeners.get(thread.id)?.(thread));
   const watch = {
@@ -88,11 +108,12 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
       get busy() {
         return busy;
       },
-      async turn(text, { mode: turnMode, interaction = "agent", decide, onEvent }) {
+      async turn(text, { mode: turnMode, interaction = "agent", decide, onEvent, yes = false }) {
         busy = true;
         diag.state.last = null;
         try {
-          const outcome = await runPrompt({ harness, watch, thread, text, mode: turnMode, interaction, decide, onEvent });
+          const gated = wrapDecide(decide, { yes });
+          const outcome = await runPrompt({ harness, watch, thread, text, mode: turnMode, interaction, decide: gated, onEvent });
           let detail = "";
           const last = diag.state.last;
           if (unreachable(outcome.thread) && last) detail = `${last.status ? `HTTP ${last.status}` : last.error}${last.host ? ` · ${last.host}` : ""}`;
@@ -116,6 +137,13 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
     loadMs: Math.round(performance.now() - started),
     diff: kernel.unifiedDiff,
     conversation,
+    mcp,
+    get mcpNotice() {
+      return mcpNotice || mcp?.notice || null;
+    },
+    async dispose() {
+      await mcp?.dispose?.();
+    },
     get current() {
       return current ? { label: current.label, moa: current.moa, references: current.references || [], aggregator: current.aggregator || current.label } : null;
     },

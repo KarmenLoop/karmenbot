@@ -76,6 +76,8 @@ export function createGateway({ agent, adapters, pairing, t, log = () => {}, app
       if (pause.kind === "change") {
         const diff = agent.diff(pause.before, pause.after);
         body = `${t("gw.changePrompt", { path: pause.path })}\n\`\`\`diff\n${preview(diff)}\n\`\`\`\n${t("gw.verdictHint")}`;
+      } else if (pause.kind === "mcp") {
+        body = `${t("gw.mcpPrompt", { name: pause.name || pause.tool, tier: pause.tier || "write" })}\n\`\`\`\n${JSON.stringify(pause.args || {}, null, 2)}\n\`\`\`\n${t("gw.verdictHint")}`;
       } else {
         body = `${t("gw.commandPrompt")}\n\`\`\`\n${pause.command}\n\`\`\`\n${t("gw.verdictHint")}`;
       }

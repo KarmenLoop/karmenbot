@@ -10,6 +10,8 @@ the license shown; the full license texts follow.
 | Hermes Agent, © 2025 Nous Research | Mixture-of-Agents design; WeCom, DingTalk, Feishu and WeChat (iLink) wire protocols; pairing and chat approval conventions | MIT |
 | OpenClaw, © 2026 OpenClaw Foundation | Feishu app-registration flow and channel conventions (reference only) | MIT |
 | QR Code generator library, © Project Nayuki | Structure of `src/gateway/qr.mjs` | MIT |
+| Playwright MCP (`@playwright/mcp`), © Microsoft Corporation | Optional browser MCP preset (`npx @playwright/mcp`); not bundled in this repo | Apache-2.0 |
+| Model Context Protocol reference servers (filesystem, fetch), © Anthropic PBC and contributors | Optional MCP presets via `npx`; not bundled | MIT |
 
 OpenHuman (GPL-3.0) was studied for product ideas only; no OpenHuman code is
 included.
@@ -33,3 +35,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Apache License 2.0 (Playwright MCP)
+
+Playwright MCP is used as an optional external process (`npx @playwright/mcp`). It is not vendored into this repository. See https://github.com/microsoft/playwright-mcp for the full Apache-2.0 license text.

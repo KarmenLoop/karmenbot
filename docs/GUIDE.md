@@ -275,6 +275,18 @@ In the chat:
 
 A write in chat sends a diff. A command sends the command text. The file lands in the gateway folder, not in whatever folder your terminal happens to be in.
 
+
+## 7b. Browser tools (MCP / Playwright)
+
+Optional. Adds browser automation through the official Playwright MCP server without changing the Koder kernel.
+
+```bash
+karmenbot connect playwright
+karmenbot mcp test playwright
+```
+
+Tools appear as `mcp.playwright.*`. Reads and ordinary writes can follow `--yes`; **submit-class** actions (send, pay, delete, login, …) always ask for confirmation. Details: [MCP.md](MCP.md).
+
 ## 8. Language, site, and leaving
 
 **Language and display** switches between Chinese and English, auto-approve, and the sidebar. The choice is saved.

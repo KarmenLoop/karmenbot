@@ -23,6 +23,7 @@ const COMMANDS = {
   model: () => import("./commands/model.mjs"),
   moa: () => import("./commands/moa.mjs"),
   connect: () => import("./commands/connect.mjs"),
+  mcp: () => import("./commands/mcp.mjs"),
   gateway: () => import("./commands/gateway.mjs"),
   pair: () => import("./commands/pair.mjs"),
   doctor: () => import("./commands/doctor.mjs"),
@@ -35,7 +36,7 @@ const COMMANDS = {
 
 const ALIASES = {
   问: "ask", 提问: "ask", 做: "run", 运行: "run", 审查: "review", 评审: "review", 修复: "fix", 补测试: "test", 流程: "flow", 编辑器: "editor", 记忆: "memory", 协议: "acp",
-  设置: "settings", 设置中心: "settings", 向导: "setup", 初始化: "setup", 模型: "model", 多模型: "moa", 接入: "connect",
+  设置: "settings", 设置中心: "settings", 向导: "setup", 初始化: "setup", 模型: "model", 多模型: "moa", 接入: "connect", 工具: "mcp",
   网关: "gateway", 配对: "pair", 体检: "doctor", 卸载: "uninstall", 帮助: "help", 界面: "tui",
   教程: "learn", 教学: "learn", tutorial: "learn", 官网: "update", 关于: "update", 更新: "update", 版本: "version",
 };

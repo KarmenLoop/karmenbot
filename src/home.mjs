@@ -3,8 +3,10 @@ import os from "node:os";
 import path from "node:path";
 
 // Everything karmenbot keeps lives under one folder, separate from Koder:
-//   config.json   preferences, models (no keys), MoA presets, gateway settings
-//   secrets.json  API keys and platform credentials, mode 600
+//   config.json   preferences, models (no keys), MoA presets, gateway settings,
+//                 mcp.servers[] (id, command, args, env, enabled, preset)
+//   secrets.json  API keys and platform credentials, mode 600;
+//                 secrets.mcp.<serverId> may hold env keys for MCP servers
 //   app/          installed releases (installer), runtime/ private Node
 export function karmenHome(env = process.env) {
   return path.resolve(env.KARMENBOT_HOME || path.join(os.homedir(), ".karmenbot"));
