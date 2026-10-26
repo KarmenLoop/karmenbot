@@ -7,6 +7,7 @@ import { createRegistry } from "./mcp/registry.mjs";
 import { wrapDecide } from "./mcp/bridge.mjs";
 import { buildInjection } from "./memory/inject.mjs";
 import { loadConfig } from "./home.mjs";
+import { enabledSkillSummaries } from "./skills/loader.mjs";
 
 // One kernel per workspace; conversations are keyed ("tui", "feishu:oc_123", ...).
 // The kernel gets a stable provider that delegates to whatever is current, so
@@ -49,6 +50,7 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
       if (system) {
         if (!String(system.content).includes("karmenloop.com")) system.content = `${system.content}\n${IDENTITY_RULES}`;
         if (pendingMemory) system.content = `${system.content}\n\n${pendingMemory}`;
+        if (skillBlock && !String(system.content).includes("Enabled skills")) system.content = `${system.content}\n\n${skillBlock}`;
       }
       return current.provider.complete(system ? { ...request, messages } : request);
     },
@@ -66,6 +68,11 @@ export async function openAgent({ workspace, env = process.env, model = null, mo
     }
   }
   await apply(model, moa);
+
+  const skillSummaries = enabledSkillSummaries({ env, workspace });
+  const skillBlock = skillSummaries.length
+    ? `Enabled skills (user can run via /skill or karmenbot skill run):\n${skillSummaries.map((item) => `- ${item.id}: ${item.description || item.name}`).join("\n")}`
+    : "";
 
   // Path B: public MCP sidecar. Kernel tools API is not exposed; we start
   // configured servers and hand a registry + decide wrapper to callers.

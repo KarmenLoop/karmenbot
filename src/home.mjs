@@ -9,7 +9,9 @@ import path from "node:path";
 //   secrets.json  API keys and platform credentials, mode 600;
 //                 secrets.mcp.<serverId> may hold env keys for MCP servers
 //   memory/       L0 workspace sessions + L1 profile.json / journal/*.jsonl
+//   skills/       installed skill packs (~/.karmenbot/skills)
 //   app/          installed releases (installer), runtime/ private Node
+// config.skills.disabled[] turns skill ids off
 export function karmenHome(env = process.env) {
   return path.resolve(env.KARMENBOT_HOME || path.join(os.homedir(), ".karmenbot"));
 }

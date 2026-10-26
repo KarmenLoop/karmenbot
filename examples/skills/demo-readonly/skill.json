@@ -1,0 +1,12 @@
+{
+  "id": "demo-readonly",
+  "name": "Demo read-only skill",
+  "version": "1.0.0",
+  "description": "Official example: lists steps without shell, network, or writes.",
+  "triggers": ["demo", "readonly"],
+  "permissions": {
+    "network": false,
+    "shell": false,
+    "write": false
+  }
+}

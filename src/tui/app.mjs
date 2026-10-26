@@ -17,6 +17,7 @@ import { createKeyParser } from "./keys.mjs";
 import { createScreen, fitSpans, overlaySpans, sp, spansWidth, toAnsi, wrapSpans } from "./paint.mjs";
 import { createSettings } from "./settings.mjs";
 import { openMemory } from "../memory-store.mjs";
+import { discoverSkills, isSkillEnabled } from "../skills/loader.mjs";
 import { matchSlash, parseSlash } from "./slash.mjs";
 import { C } from "./theme.mjs";
 import { createTranscript } from "./transcript.mjs";
@@ -574,6 +575,21 @@ export function runTui(options = {}) {
           : [[sp(t("memory.empty"), { fg: C.dim })]]);
         return;
       }
+      case "skill": {
+        const skills = discoverSkills({ env, workspace });
+        const arg = command.arg.trim();
+        if (!skills.length) {
+          info(t.lang === "en" ? "No skills. Use karmenbot skill install <dir>." : "还没有技能。用 karmenbot skill install <目录> 安装。", C.dim);
+          break;
+        }
+        if (!arg || arg === "list") {
+          push([[sp(skills.map((skill) => `${isSkillEnabled(skill.id, env) ? "on" : "off"} ${skill.id} — ${skill.name}`).join("\n"), { fg: C.text })]]);
+        } else {
+          info(t.lang === "en" ? "In the TUI use /skill list; run packs with: karmenbot skill run <id>" : "界面里用 /skill list；运行请用：karmenbot skill run <id>", C.dim);
+        }
+        break;
+      }
+
       case "about":
         transcript.info(identityText(state.lang).split("\n").map((line) => [sp(line, { fg: C.text })]));
         checkUpdate({ env, fetchImpl: options.fetchImpl }).then((result) => {
