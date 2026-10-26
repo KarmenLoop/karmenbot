@@ -136,7 +136,7 @@ If the test fails:
 | 402 or 403 | The account has no balance, or this model is not enabled. Check the vendor console. |
 | Timeout | The network blocked that host. Try another network, then test again. |
 
-The key is stored in `~/.karmenbot/secrets.json` (`%USERPROFILE%\.karmenbot\secrets.json` on Windows), mode 600. The screen and the logs show at most the last four characters.
+The key is stored in `~/.karmenbot/secrets.json` (`%USERPROFILE%\.karmenbot\secrets.json` on Windows), mode 600. The screen and the logs show at most the last four characters. List names only with `karmenbot vault list` (there is no `vault get` that prints secrets).
 
 `karmenbot doctor` prints the model line. A star marks the default.
 
@@ -198,6 +198,7 @@ Optional. Install a pack under `~/.karmenbot/skills` or the workspace `.karmenbo
 
 ```bash
 karmenbot skill install examples/skills/demo-readonly
+karmenbot skill install examples/skills/daily-brief
 karmenbot skill list
 karmenbot skill run demo-readonly
 ```
@@ -297,7 +298,7 @@ Queue a timed chat follow-up with `karmenbot gateway followup add …`, then run
 
 ### Gateway and pairing
 
-Assistant replies from the gateway are **drafted first** by default: you see the text, then reply 「发送」/ send / 批准 to deliver, or 「拒绝」 to cancel. Turn this off with `"gateway": { "draftThenSend": false }` in `~/.karmenbot/config.json`. See [GATEWAY.md](./GATEWAY.md).
+Assistant replies from the gateway are **drafted first** by default: you see the text, may reply 「改 …」/ `edit …` to replace or 「+ …」/「追加 …」 to append, then 「发送」/ send / 批准 to deliver, or 「拒绝」 to cancel. Turn this off with `"gateway": { "draftThenSend": false }` in `~/.karmenbot/config.json`. See [GATEWAY.md](./GATEWAY.md).
 
 Settings → **Gateway** → **Start**. The page then says running and shows a process id. Turn on **Start at login** if it should come back after a reboot.
 

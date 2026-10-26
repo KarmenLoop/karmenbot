@@ -39,6 +39,7 @@ OpenAI-compatible proxy if you prefer fully offline STT.
 ## TTS
 
 - macOS: `say`
+- Windows: PowerShell `System.Speech` (`SpeechSynthesizer`)
 - Linux: `spd-say` or `espeak`
 
 If none are available, `voice last` prints the text instead of failing silently when TTS is missing after print fallback paths.

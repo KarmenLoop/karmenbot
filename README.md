@@ -29,6 +29,12 @@ This terminal app is separate from the KARMEN BOT mobile app, which is not avail
 - **A few models on one job.** They each take a look. One of them combines that and actually does the work. Off unless you turn it on.
 - **Chat apps, if you want them.** Scan a code for Feishu, WeCom, DingTalk, and personal WeChat. A short form for Telegram, Slack, Discord, and WhatsApp Business. First contact from anyone else needs your approval on this computer.
 - **A background process.** Start it when chat should keep working after you close the window. Start-at-login is a switch, not a separate installer.
+- **MCP and browser tools.** `karmenbot connect playwright` and other MCP presets; mail/calendar connectors stay Path B with the same approve flow.
+- **Memory that stays local.** Folder notes plus optional profile / journal under `~/.karmenbot`; injection never echoes secrets.
+- **Skills / playbooks.** Install a pack (`skill install ./examples/skills/daily-brief`), scan it, run steps that still ask before shell or writes.
+- **Draft-then-send on chat.** Gateway replies show as a draft first; edit with `改` / `edit`, then send — or deny.
+- **Routines.** `karmenbot routine` / `cron` for scheduled flows; follow-ups via `gateway followup`.
+- **Voice (optional).** OS TTS (including Windows System.Speech) and BYOK speech-to-text.
 - **The site, from inside the app.** [karmenloop.com](https://karmenloop.com), the updates page, and a version check. The check does not send your key or your files.
 
 ## Platforms

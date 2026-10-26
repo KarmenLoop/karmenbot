@@ -96,3 +96,7 @@ mem0 cross-workspace memory, Skills/Playbooks, draft-then-send, cron routines, m
 ## Web search
 
 Preset `brave-search` (`@modelcontextprotocol/server-brave-search`) needs `BRAVE_API_KEY` in `secrets.mcp.brave-search` or the server env.
+
+## Future
+
+Full in-TUI Google / Streamable HTTP MCP OAuth stays deferred; use stdio presets and docs for now.

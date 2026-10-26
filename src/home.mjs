@@ -10,7 +10,8 @@ import path from "node:path";
 //                 draft until the user confirms with 发送/批准/y; set false for
 //                 legacy immediate send.
 //   secrets.json  API keys, platform + mcp connector credentials, mode 600;
-//                 secrets.mcp.<serverId> may hold env keys for MCP servers
+//                 secrets.mcp.<serverId> may hold env keys for MCP servers;
+//                 inspect names with `karmenbot vault list` (never prints values)
 //   memory/       L0 workspace sessions + L1 profile.json / journal/*.jsonl
 //   skills/       installed skill packs (~/.karmenbot/skills)
 //   app/          installed releases (installer), runtime/ private Node

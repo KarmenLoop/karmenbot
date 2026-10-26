@@ -55,6 +55,7 @@ export async function run(ctx) {
   line(null, `${zh ? "MCP 密钥" : "MCP secrets"} ${mcpSecrets.length ? mcpSecrets.map((id) => `mcp.${id}`).join(", ") : zh ? "无（写在 secrets.json → mcp.<id>）" : "none (secrets.json → mcp.<id>)"}`);
   const voiceKey = Boolean(loadSecrets(env).voice?.apiKey || env.KARMENBOT_STT_API_KEY || env.OPENAI_API_KEY);
   line(null, `${zh ? "语音 STT 密钥" : "Voice STT key"} ${voiceKey ? (zh ? "已配置" : "set") : zh ? "未配置（可选 BYOK）" : "unset (optional BYOK)"}`);
+  line(null, zh ? "密钥库：karmenbot vault list（只列名称，不打印明文）" : "Vault: karmenbot vault list (names only; never prints values)");
 
   return vendor.bad.length || major < 22 ? 1 : 0;
 }

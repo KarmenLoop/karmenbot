@@ -1,6 +1,6 @@
 import { asksWhoMadeIt, identityText } from "../official.mjs";
 import { sanitize } from "../tui/text.mjs";
-import { chunkText, readChoice, readVerdict, readSendVerdict } from "./text.mjs";
+import { chunkText, readChoice, readVerdict, readDraftAction } from "./text.mjs";
 
 // The gateway: every chat platform feeds normalized messages in here.
 //   inbound: { chatId, userId, userName, text, isGroup, mentioned, messageId, reply }
@@ -10,7 +10,8 @@ import { chunkText, readChoice, readVerdict, readSendVerdict } from "./text.mjs"
 // person to answer 批准 / 拒绝 in that chat, and time out to "no".
 //
 // When draftThenSend is on (default), assistant replies are held as one draft
-// after the turn; the same user confirms with 发送/批准/y before the final send.
+// after the turn; the same user may edit (改/edit) or append (+/追加), then
+// confirms with 发送/批准/y before the final send.
 // Notices, pairing, help, and decide prompts always send immediately.
 
 const COMMANDS = {
@@ -74,22 +75,38 @@ export function createGateway({
     });
   }
 
-  /** Hold assistant text as a draft; user confirms before the final send. */
+  /** Hold assistant text as a draft; user may edit/append, then confirm before final send. */
   async function releaseDraft(chat, msg, body) {
-    const text = sanitize(body);
+    let text = sanitize(body);
     if (!text) return { sent: false, drafted: false };
     if (!draftThenSend) {
       await send(chat.platform, msg, text);
       return { sent: true, drafted: false };
     }
-    const card = `${t("gw.draftHeader")}\n\n${text}\n\n${t("gw.draftHint")}`;
-    const verdict = await ask(chat, msg, card, (reply) => readSendVerdict(reply));
-    if (verdict === "approve") {
-      await send(chat.platform, msg, text);
-      return { sent: true, drafted: true };
+    while (true) {
+      const card = `${t("gw.draftHeader")}\n\n${text}\n\n${t("gw.draftHint")}`;
+      const action = await ask(chat, msg, card, (reply) => readDraftAction(reply));
+      if (!action || action.action === "deny") {
+        await send(chat.platform, msg, t("gw.draftCancelled"));
+        return { sent: false, drafted: true };
+      }
+      if (action.action === "send") {
+        await send(chat.platform, msg, text);
+        return { sent: true, drafted: true };
+      }
+      if (action.action === "replace") {
+        const next = sanitize(action.body);
+        if (next) text = next;
+        continue;
+      }
+      if (action.action === "append") {
+        const extra = sanitize(action.body);
+        if (extra) text = sanitize(`${text}\n${extra}`);
+        continue;
+      }
+      await send(chat.platform, msg, t("gw.draftCancelled"));
+      return { sent: false, drafted: true };
     }
-    await send(chat.platform, msg, t("gw.draftCancelled"));
-    return { sent: false, drafted: true };
   }
 
   function decider(chat, msg) {
