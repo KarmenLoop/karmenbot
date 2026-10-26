@@ -15,6 +15,7 @@ import path from "node:path";
 //   skills/       installed skill packs (~/.karmenbot/skills)
 //   app/          installed releases (installer), runtime/ private Node
 // config.skills.disabled[] turns skill ids off
+//   routines/     scheduled flows (dir 700, *.json 600); see docs/ROUTINES.md
 export function karmenHome(env = process.env) {
   return path.resolve(env.KARMENBOT_HOME || path.join(os.homedir(), ".karmenbot"));
 }

@@ -8,6 +8,8 @@ const ZH = `karmenbot {version}
   karmenbot fix --command "npm test"   检查失败就改，最多三次
   karmenbot test <文件> --command "npm test"   按仓库现有风格补测试
   karmenbot flow 步骤.json          按 JSON 依次 ask / run / shell
+  karmenbot routine list|add|pause|resume|delete|run|tick|install
+  karmenbot cron …                 routine 的别名；tick 可挂到 crontab / launchd
   karmenbot ci init                写入 GitHub Actions 审查工作流
   karmenbot memory show|search|add|remove|clear|forget
   karmenbot memory profile|journal|status|propose   全局画像 / 日记 / 状态
@@ -53,6 +55,8 @@ Usage
   karmenbot fix --command "npm test"
   karmenbot test <file> --command "npm test"
   karmenbot flow steps.json        ask / run / shell steps
+  karmenbot routine list|add|pause|resume|delete|run|tick|install
+  karmenbot cron …                 alias for routine; wire tick into crontab / launchd
   karmenbot ci init                GitHub Actions review workflow
   karmenbot memory show|search|add|remove|clear|forget
   karmenbot memory profile|journal|status|propose   global profile / journal / status
