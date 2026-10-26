@@ -179,6 +179,19 @@ karmenbot "Turn these notes into three conclusions"
 
 The terminal asks `[y/N]`. Enter alone means no.
 
+
+## 5b. Memory (workspace + global)
+
+Folder notes stay per workspace (`karmenbot memory add "…"`). Wave2 adds a **global** layer that follows you across folders:
+
+```bash
+karmenbot memory profile add "Prefers short answers in Chinese"
+karmenbot memory journal add "Decided to ship MCP first"
+karmenbot memory status
+```
+
+Before a turn, matching profile/journal lines are loaded into the system prompt unless you pass `--no-memory`. Secrets are never injected. Details: [MEMORY.md](MEMORY.md).
+
 ## 6. Several models (optional)
 
 Add a second model with the same steps as section 4. Then open **Mixture of Agents**.

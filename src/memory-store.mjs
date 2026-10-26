@@ -3,8 +3,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { karmenHome } from "./home.mjs";
 
+/** L0 workspace session files live under ~/.karmenbot/memory/<workspaceHash>/ */
+export function workspaceMemoryId(workspace) {
+  return crypto.createHash("sha256").update(path.resolve(workspace)).digest("hex").slice(0, 16);
+}
+
 function fileFor(workspace, session, env) {
-  const id = crypto.createHash("sha256").update(path.resolve(workspace)).digest("hex").slice(0, 16);
+  const id = workspaceMemoryId(workspace);
   return path.join(karmenHome(env), "memory", id, `${session || "default"}.json`);
 }
 
@@ -26,5 +31,7 @@ export function openMemory(workspace, env, session = "default") {
     fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 });
     fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, { mode: 0o600 });
   };
-  return { file, session, read, write };
+  return { file, session, workspaceId: workspaceMemoryId(workspace), read, write };
 }
+
+export { fileFor as workspaceSessionFile };
