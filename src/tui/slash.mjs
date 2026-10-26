@@ -3,6 +3,7 @@ export const COMMANDS = [
   { name: "setup", aliases: ["向导", "初始化"] },
   { name: "connect", aliases: ["接入"], args: "<platform>" },
   { name: "memory", aliases: ["记忆"], args: "show|add|search" },
+  { name: "skill", aliases: ["技能"], args: "list|run|install|show" },
   { name: "about", aliases: ["官网", "关于", "更新"] },
   { name: "help", aliases: ["帮助", "?"] },
   { name: "learn", aliases: ["教程", "教学"] },

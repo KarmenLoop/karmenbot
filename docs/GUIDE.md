@@ -192,6 +192,18 @@ karmenbot memory status
 
 Before a turn, matching profile/journal lines are loaded into the system prompt unless you pass `--no-memory`. Secrets are never injected. Details: [MEMORY.md](MEMORY.md).
 
+## 5c. Skills / Playbooks
+
+Optional. Install a pack under `~/.karmenbot/skills` or the workspace `.karmenbot/skills`:
+
+```bash
+karmenbot skill install examples/skills/demo-readonly
+karmenbot skill list
+karmenbot skill run demo-readonly
+```
+
+Shell and file-write steps always ask for confirmation. Skills cannot turn on `--yes`. Details: [SKILLS.md](SKILLS.md).
+
 ## 6. Several models (optional)
 
 Add a second model with the same steps as section 4. Then open **Mixture of Agents**.
