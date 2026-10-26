@@ -287,6 +287,10 @@ One-shot flows: `karmenbot flow steps.json`. To run a flow or prompt on a schedu
 
 Non-chat Gmail / Google Calendar access is configured as MCP presets: `karmenbot connect gmail` or `connect calendar`. Entries land in `mcp.servers[]` (same shape as Wave1 MCP). See [CONNECTORS.md](./CONNECTORS.md).
 
+### Proactive follow-ups
+
+Queue a timed chat follow-up with `karmenbot gateway followup add …`, then run `karmenbot gateway tick` (cron-friendly). Default delivery is a confirm-style draft card. See [FOLLOWUPS.md](./FOLLOWUPS.md).
+
 ### Gateway and pairing
 
 Assistant replies from the gateway are **drafted first** by default: you see the text, then reply 「发送」/ send / 批准 to deliver, or 「拒绝」 to cancel. Turn this off with `"gateway": { "draftThenSend": false }` in `~/.karmenbot/config.json`. See [GATEWAY.md](./GATEWAY.md).

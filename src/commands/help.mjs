@@ -31,6 +31,7 @@ const ZH = `karmenbot {version}
   karmenbot connect gmail|calendar [--dry-run]   邮件/日历 MCP 预设（写入 mcp.servers）
   karmenbot mcp list|add|remove|test|doctor|presets
   karmenbot gateway run|start|stop|status|logs   前台运行 / 后台常驻 / 停止 / 状态 / 日志
+  karmenbot gateway followup add|list|cancel|tick   主动跟进队列（gateway tick 同 tick）
   karmenbot pair list|approve <配对码>|revoke <账号>   管理谁能和 Karmen 说话
 
 其他
@@ -79,6 +80,7 @@ Chat platforms (Feishu, WeCom, WeChat, DingTalk, Telegram, Slack, Discord, Whats
   karmenbot connect gmail|calendar [--dry-run]   mail/calendar MCP presets → mcp.servers
   karmenbot mcp list|add|remove|test|doctor|presets
   karmenbot gateway run|start|stop|status|logs
+  karmenbot gateway followup add|list|cancel|tick   proactive follow-up queue (gateway tick)
   karmenbot pair list|approve <code>|revoke <account>   who may talk to Karmen
 
 Other

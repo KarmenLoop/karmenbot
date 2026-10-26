@@ -12,7 +12,7 @@ import { installService, logFile, stopService } from "../gateway/service.mjs";
 import { activeModel } from "../models.mjs";
 import { resolveMoa } from "../moa.mjs";
 import { configuredPlatforms } from "./connect.mjs";
-
+import { runFollowupCommand } from "./gateway-followup.mjs";
 
 // Files and commands Karmen touches from chat live in their own folder unless
 // the owner picks another with -w or gateway.workspace.
@@ -58,6 +58,7 @@ export async function run(ctx) {
   const zh = ctx.t.lang !== "en";
   const action = ctx.args[0] || "status";
   if (action === "run") return runForeground(ctx);
+  if (action === "followup" || action === "tick") return runFollowupCommand(ctx);
   if (action === "start") {
     const existing = runningPid(env);
     if (existing) {
