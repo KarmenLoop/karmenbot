@@ -1,8 +1,14 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
+import { loadConfig } from "../home.mjs";
 import path from "node:path";
 import { getSkill, isSkillEnabled } from "./loader.mjs";
 import { scanSkill } from "./scan.mjs";
+
+
+export function shouldAutoRunScripts(config = {}) {
+  return Boolean(config?.skills?.autoRunScripts);
+}
 
 /**
  * Parse SKILL.md into ordered steps.
@@ -185,6 +191,28 @@ export async function runSkill(id, {
 
     results.push({ index, type: step.type, ok: false, reason: "unsupported step" });
     return { ok: false, skill: skill.id, steps, results };
+  }
+
+  // Optional: run scripts/ after markdown steps when config.skills.autoRunScripts
+  // is true AND permissions.shell is declared. Each script still goes through decide().
+  const auto = shouldAutoRunScripts(loadConfig(env));
+  if (auto && skill.permissions?.shell && Array.isArray(skill.scripts) && skill.scripts.length) {
+    for (const script of skill.scripts) {
+      const rel = typeof script === "string" ? script : script.path;
+      if (!rel || !String(rel).startsWith("scripts/")) continue;
+      const full = path.join(skill.dir, rel);
+      const cmd = `bash ${JSON.stringify(full)}`;
+      const pause = { kind: "approval", command: cmd, skill: skill.id, path: workspace, autoRunScript: true };
+      const decision = typeof decide === "function" ? await decide(pause) : { accept: false };
+      onEvent({ type: "decision", pause, decision });
+      if (!decision?.accept || decision.cancel) {
+        results.push({ type: "script", ok: false, denied: true, script: rel });
+        return { ok: false, skill: skill.id, steps, results };
+      }
+      const outcome = await runShell(cmd, { cwd: workspace, env: {} });
+      results.push({ type: "script", script: rel, ...outcome });
+      if (!outcome.ok) return { ok: false, skill: skill.id, steps, results };
+    }
   }
 
   return { ok: true, skill: skill.id, steps, results };

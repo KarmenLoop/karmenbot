@@ -1,5 +1,10 @@
 import { KarmenError } from "../errors.mjs";
-import { loadConfig, loadSecrets } from "../home.mjs";
+import { loadConfig, loadSecrets, saveConfig } from "../home.mjs";
+import { listConfiguredServers, enableServer } from "../mcp/registry.mjs";
+import { listPresets } from "../mcp/presets.mjs";
+import { discoverSkills, setSkillEnabled, isSkillEnabled } from "../skills/loader.mjs";
+import { listFacts } from "../memory/profile.mjs";
+import { listJournalDays, readJournalDay } from "../memory/journal.mjs";
 import { modelPresets } from "../kernel.mjs";
 import { listModels, recordFor, removeModel, useModel } from "../models.mjs";
 import { resolveMoa } from "../moa.mjs";
@@ -270,6 +275,12 @@ export function createSettings({
             link(L("聊天平台", "Chat apps"), platforms.length ? platforms.join("、") : L("未接入（可选）", "none (optional)"), () => open("platforms"), platforms.length ? C.ok : C.dim, platforms.length ? "✓" : "○"),
             gap,
             link(L("后台网关", "Gateway"), pid ? L(`运行中 · 进程 ${pid}`, `running · pid ${pid}`) : L("没有运行（可选）", "stopped (optional)"), () => open("gateway"), pid ? C.ok : C.dim, pid ? "✓" : "○"),
+            gap,
+            link(L("MCP 工具", "MCP tools"), (() => { const n = listConfiguredServers(env).filter((s) => s.enabled !== false).length; return n ? L(`${n} 个已启用`, `${n} enabled`) : L("未配置（可选）", "none (optional)"); })(), () => open("mcp"), C.dim, "·"),
+            gap,
+            link(L("记忆", "Memory"), (() => { try { return L(`画像 ${listFacts(env).length} 条`, `profile ${listFacts(env).length}`); } catch { return L("本地画像 / 日记", "profile / journal"); } })(), () => open("memory"), C.dim, "·"),
+            gap,
+            link(L("技能", "Skills"), (() => { const n = discoverSkills({ env, workspace }).length; return n ? L(`${n} 个已安装`, `${n} installed`) : L("未安装（可选）", "none (optional)"); })(), () => open("skills"), C.dim, "·"),
             gap,
             link(L("语言与显示", "Language & display"), [L("中文", "English"), prefs.session ? (prefs.autoYes() ? L("自动确认开", "auto-approve on") : L("自动确认关", "auto-approve off")) : ""].filter(Boolean).join(" · "), () => open("prefs"), C.dim, "·"),
             gap,
@@ -616,6 +627,92 @@ export function createSettings({
             ...chaptersFor(data.os).map((chapter, index) => link(`${index + 1}. ${chapter.title}`, "", () => open("reader", { os: data.os, index }), C.dim)),
           ],
         };
+      },
+    },
+
+
+    mcp: {
+      title: () => L("MCP 工具", "MCP tools"),
+      build() {
+        const servers = listConfiguredServers(env);
+        const presets = listPresets();
+        const items = [];
+        items.push(heading(L("已配置", "Configured")));
+        if (!servers.length) items.push(text(L("还没有。用 karmenbot connect playwright / gmail，或 mcp add。", "None yet. Use karmenbot connect playwright / gmail, or mcp add."), C.faint));
+        for (const server of servers) {
+          items.push(toggle(`${server.id}${server.preset ? ` (${server.preset})` : ""}`, server.enabled !== false, (on) => {
+            enableServer(server.id, on, env);
+            say(on ? L(`已启用 ${server.id}`, `Enabled ${server.id}`) : L(`已停用 ${server.id}`, `Disabled ${server.id}`), "ok");
+          }));
+        }
+        items.push(heading(L("预设", "Presets")));
+        for (const preset of presets) {
+          const has = servers.some((s) => s.id === preset.id || s.preset === preset.id);
+          items.push(text(`${preset.id} — ${preset.description}${has ? L(" · 已添加", " · added") : ""}`, C.faint));
+        }
+        items.push(text(L("网络检索：brave-search（需 BRAVE_API_KEY）或 fetch。密钥写在 secrets.json → mcp.<id>。", "Web search: brave-search (needs BRAVE_API_KEY) or fetch. Keys in secrets.json → mcp.<id>."), C.dim));
+        return { intro: [L("开关只会改 enabled；添加请用终端 connect / mcp。", "Toggles only flip enabled; add via connect / mcp in the terminal.")], items };
+      },
+    },
+
+    memory: {
+      title: () => L("记忆", "Memory"),
+      build() {
+        const config = loadConfig(env);
+        const mem = config.memory || {};
+        let facts = [];
+        let journal = [];
+        try { facts = listFacts(env) || []; } catch { /* */ }
+        try {
+          for (const day of listJournalDays(env).slice(0, 3)) {
+            journal.push(...(readJournalDay(day, env) || []).map((row) => ({ ...row, day })));
+          }
+          journal = journal.slice(0, 5);
+        } catch { /* */ }
+        const items = [
+          toggle(L("回合注入记忆", "Inject memory each turn"), mem.enabled !== false, (on) => {
+            saveConfig({ memory: { ...mem, enabled: on } }, env);
+            say(on ? L("已开启注入", "Injection on") : L("已关闭注入", "Injection off"), "ok");
+          }),
+          heading(L("画像（最多 5 条预览）", "Profile (preview)")),
+        ];
+        if (!facts.length) items.push(text(L("空。终端：karmenbot memory profile add …", "Empty. Terminal: karmenbot memory profile add …"), C.faint));
+        for (const fact of facts.slice(0, 5)) {
+          const line = typeof fact === "string" ? fact : (fact.text || fact.value || JSON.stringify(fact));
+          items.push(text(String(line).slice(0, 80), C.soft));
+        }
+        items.push(heading(L("近期日记", "Recent journal")));
+        if (!journal.length) items.push(text(L("空。终端：karmenbot memory journal add …", "Empty. Terminal: karmenbot memory journal add …"), C.faint));
+        for (const row of journal.slice(0, 5)) {
+          const line = typeof row === "string" ? row : (row.text || row.body || JSON.stringify(row));
+          items.push(text(String(line).slice(0, 80), C.soft));
+        }
+        return { intro: [L("完整增删请用 karmenbot memory …；此处只做开关与预览。", "Add/remove in the terminal; this page is toggle + preview.")], items };
+      },
+    },
+
+    skills: {
+      title: () => L("技能", "Skills"),
+      build() {
+        const config = loadConfig(env);
+        const auto = config.skills?.autoRunScripts === true;
+        const skills = discoverSkills({ env, workspace });
+        const items = [
+          toggle(L("自动跑 scripts/（仍要确认）", "Auto-run scripts/ (still confirm)"), auto, (on) => {
+            saveConfig({ skills: { ...(config.skills || {}), autoRunScripts: on } }, env);
+            say(on ? L("已开启 autoRunScripts", "autoRunScripts on") : L("已关闭 autoRunScripts", "autoRunScripts off"), "ok");
+          }),
+          heading(L("已安装", "Installed")),
+        ];
+        if (!skills.length) items.push(text(L("空。karmenbot skill install <目录|https网址>", "Empty. karmenbot skill install <dir|https-url>"), C.faint));
+        for (const skill of skills) {
+          const on = isSkillEnabled(skill.id, env);
+          items.push(toggle(`${skill.id} — ${(skill.description || "").slice(0, 40)}`, on, (enabled) => {
+            setSkillEnabled(skill.id, enabled, env);
+            say(enabled ? L(`已启用 ${skill.id}`, `Enabled ${skill.id}`) : L(`已停用 ${skill.id}`, `Disabled ${skill.id}`), "ok");
+          }));
+        }
+        return { intro: [L("安装 / URL / 运行仍在终端；这里开关启用与 scripts 选项。", "Install/URL/run stay in the terminal; toggles here.")], items };
       },
     },
 

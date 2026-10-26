@@ -85,3 +85,17 @@ Warnings: declared network/shell/write patterns that are allowed by permissions.
 ## Example
 
 See [`examples/skills/demo-readonly`](../examples/skills/demo-readonly).
+
+## URL install
+
+```bash
+karmenbot skill install https://example.com/pack.zip
+```
+
+Only `https://`. Archive must contain `skill.json`; scanner runs before copy.
+
+## scripts/ auto-run
+
+Set `"skills": { "autoRunScripts": true }` in config. After markdown steps, each
+`scripts/*` file is offered through the same decide gate as shell steps (never
+skipped by `--yes`).

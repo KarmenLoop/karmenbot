@@ -92,3 +92,7 @@ When a future kernel export appears, wrap it thinly in `kernel.mjs` only—never
 ## Out of scope (later waves)
 
 mem0 cross-workspace memory, Skills/Playbooks, draft-then-send, cron routines, mail/calendar connectors.
+
+## Web search
+
+Preset `brave-search` (`@modelcontextprotocol/server-brave-search`) needs `BRAVE_API_KEY` in `secrets.mcp.brave-search` or the server env.
