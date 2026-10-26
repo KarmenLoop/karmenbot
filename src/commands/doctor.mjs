@@ -51,5 +51,10 @@ export async function run(ctx) {
   const connectors = connectorDoctor(env);
   const connSummary = connectors.connectors.filter((row) => row.configured).map((row) => row.id).join(", ") || (zh ? "未接入" : "none");
   line(null, `${zh ? "邮件/日历连接器" : "Mail/calendar connectors"} ${connSummary}`);
+  const mcpSecrets = Object.keys(loadSecrets(env).mcp || {});
+  line(null, `${zh ? "MCP 密钥" : "MCP secrets"} ${mcpSecrets.length ? mcpSecrets.map((id) => `mcp.${id}`).join(", ") : zh ? "无（写在 secrets.json → mcp.<id>）" : "none (secrets.json → mcp.<id>)"}`);
+  const voiceKey = Boolean(loadSecrets(env).voice?.apiKey || env.KARMENBOT_STT_API_KEY || env.OPENAI_API_KEY);
+  line(null, `${zh ? "语音 STT 密钥" : "Voice STT key"} ${voiceKey ? (zh ? "已配置" : "set") : zh ? "未配置（可选 BYOK）" : "unset (optional BYOK)"}`);
+
   return vendor.bad.length || major < 22 ? 1 : 0;
 }

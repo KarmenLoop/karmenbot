@@ -10,6 +10,7 @@ import {
   setSkillEnabled,
   enabledSkillSummaries,
 } from "../skills/loader.mjs";
+import { installSkillFromUrl } from "../skills/install-url.mjs";
 import { runSkill, parseSteps } from "../skills/runner.mjs";
 
 const pick = (ctx, zh, en) => (ctx.t.lang === "en" ? en : zh);
@@ -57,9 +58,33 @@ export async function run(ctx) {
 
   if (action === "install") {
     const source = args[0];
-    if (!source) throw new KarmenError("err.failed", { message: en ? "Usage: skill install <path>" : "用法：skill install <路径>" });
-    if (/^https?:\/\//i.test(source)) {
-      throw new KarmenError("err.failed", { message: en ? "URL install is not enabled in Wave3. Clone/download locally, then skill install <dir>." : "Wave3 不支持直接 URL 安装。请先下载到本地，再 skill install <目录>。" });
+    if (!source) throw new KarmenError("err.failed", { message: en ? "Usage: skill install <path|https-url>" : "用法：skill install <路径|https网址>" });
+    if (/^https:\/\//i.test(source)) {
+      const ok = ctx.stdin.isTTY
+        ? await (async () => {
+            const { createPrompter } = await import("../prompt.mjs");
+            const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
+            try {
+              return await prompter.confirm(pick(ctx, "从 URL 下载并扫描安装？[y/N] ", "Download from URL, scan, then install? [y/N] "), false);
+            } finally {
+              prompter.close();
+            }
+          })()
+        : Boolean(ctx.opts.force);
+      if (!ok) return 1;
+      try {
+        const installed = await installSkillFromUrl(source, { env: ctx.env, force: true, fetchImpl: ctx.io.fetchImpl });
+        ctx.stdout.write(`${pick(ctx, `已从 URL 安装 ${installed.id}`, `Installed ${installed.id} from URL`)}\n`);
+        if (installed.scan?.warnings?.length) {
+          for (const warning of installed.scan.warnings) ctx.stdout.write(`  warn: ${warning.message}\n`);
+        }
+        return 0;
+      } catch (error) {
+        throw new KarmenError("err.failed", { message: error.message });
+      }
+    }
+    if (/^http:\/\//i.test(source)) {
+      throw new KarmenError("err.failed", { message: en ? "Only https:// URLs are allowed." : "只允许 https:// 链接。" });
     }
     const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
     try {

@@ -14,7 +14,8 @@ import path from "node:path";
 //   memory/       L0 workspace sessions + L1 profile.json / journal/*.jsonl
 //   skills/       installed skill packs (~/.karmenbot/skills)
 //   app/          installed releases (installer), runtime/ private Node
-// config.skills.disabled[] turns skill ids off
+// config.skills.disabled[] turns skill ids off; skills.autoRunScripts runs scripts/ via decide
+//   voice/        last-reply.txt; config.voice.stt + secrets.voice.apiKey (BYOK)
 //   routines/     scheduled flows (dir 700, *.json 600); see docs/ROUTINES.md
 //   gateway/      followups.jsonl (proactive queue, 600); see docs/FOLLOWUPS.md
 export function karmenHome(env = process.env) {

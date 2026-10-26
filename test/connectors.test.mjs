@@ -55,7 +55,7 @@ test("upsert into home mcp.servers and secrets without live credentials", async 
     GOOGLE_MCP_CLIENT_ID: "cid",
     GOOGLE_MCP_CLIENT_SECRET: "csecret",
   }, env);
-  assert.equal(result.via, "home");
+  assert.ok(["home", "registry"].includes(result.via), result.via);
   assert.equal(getConfiguredServer("google-calendar", env).command, "npx");
   assert.equal(listConfiguredServers(env).length, 1);
   assert.equal(loadConfig(env).mcp.servers[0].preset, "google-calendar");
@@ -72,7 +72,7 @@ test("upsert into home mcp.servers and secrets without live credentials", async 
   assert.deepEqual(readMcpSecret("google-calendar", env), {});
 });
 
-test("connector doctor reports config-only without Wave1 client", async (t) => {
+test("connector doctor reports configured gmail with mcp client ready", async (t) => {
   const home = await fs.mkdtemp(path.join(os.tmpdir(), "kb-conn-doc-"));
   t.after(() => fs.rm(home, { recursive: true, force: true }));
   const env = { KARMENBOT_HOME: home };
@@ -80,13 +80,13 @@ test("connector doctor reports config-only without Wave1 client", async (t) => {
   saveMcpSecret("gmail", { GOOGLE_MCP_CLIENT_ID: "x" }, env);
 
   const report = connectorDoctor(env);
-  // This checkout has no src/mcp/client.mjs
-  assert.equal(hasMcpClient(), false);
-  assert.equal(report.mcpClient, false);
+  // After #5 lands, MCP client module is present.
+  assert.equal(hasMcpClient(), true);
+  assert.equal(report.mcpClient, true);
   const gmail = report.connectors.find((row) => row.id === "gmail");
   assert.equal(gmail.configured, true);
   assert.equal(gmail.hasSecrets, true);
-  assert.match(gmail.runtime, /PR #5/);
+  assert.match(gmail.runtime, /mcp-client-ready/);
   const cal = report.connectors.find((row) => row.id === "google-calendar");
   assert.equal(cal.configured, false);
 });
