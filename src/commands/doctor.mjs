@@ -7,6 +7,7 @@ import { listModels } from "../models.mjs";
 import { resolveMoa } from "../moa.mjs";
 import { OFFICIAL } from "../official.mjs";
 import { listConfiguredServers } from "../mcp/registry.mjs";
+import { connectorDoctor } from "../connectors/status.mjs";
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -47,5 +48,8 @@ export async function run(ctx) {
   line(null, `${zh ? "聊天平台" : "Platforms"} ${platforms.length ? platforms.join(", ") : zh ? "未接入" : "none"}`);
   const mcpServers = listConfiguredServers(env);
   line(null, `MCP ${mcpServers.length ? mcpServers.map((item) => `${item.id}${item.enabled ? "" : "(off)"}`).join(", ") : zh ? "未配置（karmenbot connect playwright）" : "none (karmenbot connect playwright)"}`);
+  const connectors = connectorDoctor(env);
+  const connSummary = connectors.connectors.filter((row) => row.configured).map((row) => row.id).join(", ") || (zh ? "未接入" : "none");
+  line(null, `${zh ? "邮件/日历连接器" : "Mail/calendar connectors"} ${connSummary}`);
   return vendor.bad.length || major < 22 ? 1 : 0;
 }

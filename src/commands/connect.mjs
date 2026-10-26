@@ -10,8 +10,10 @@ import { registerWecomBot } from "../gateway/platforms/wecom.mjs";
 import { loginWeixin } from "../gateway/platforms/weixin.mjs";
 import { encodeQr, renderQr } from "../gateway/qr.mjs";
 import { createPrompter } from "../prompt.mjs";
-
-import { addPreset, getConfiguredServer } from "../mcp/registry.mjs";
+import { getConnectorPreset, listConnectorPresets, resolveConnectorId, serverFromConnectorPreset } from "../connectors/presets.mjs";
+import { hasMcpClient } from "../connectors/status.mjs";
+import { upsertViaRegistryOrHome } from "../mcp/home-servers.mjs";
+import { addPreset, getConfiguredServer, removeServer } from "../mcp/registry.mjs";
 import { listPresets } from "../mcp/presets.mjs";
 
 async function connectPlaywright(ctx, prompter) {
@@ -194,6 +196,60 @@ const FLOWS = {
   },
 };
 
+
+async function connectConnector(ctx, prompter, wanted) {
+  const preset = getConnectorPreset(wanted);
+  if (!preset) return false;
+  const existing = getConfiguredServer(preset.id, ctx.env);
+  if (existing) {
+    prompter.print(pick(ctx,
+      `${preset.name} 已在 mcp.servers 里（id=${preset.id}）。可用 karmenbot connect ${preset.id} remove 移除，或查看 docs/CONNECTORS.md。`,
+      `${preset.name} is already in mcp.servers (id=${preset.id}). Remove with karmenbot connect ${preset.id} remove, or see docs/CONNECTORS.md.`));
+    return true;
+  }
+
+  prompter.print(pick(ctx,
+    `将写入 MCP 预设「${preset.name}」到 ~/.karmenbot/config.json → mcp.servers[]。\n默认用社区包 google-services-mcp（stdio）。官方 Google 远程 MCP：${preset.remoteUrl}`,
+    `This writes the "${preset.name}" MCP preset into ~/.karmenbot/config.json → mcp.servers[].\nDefault stdio package: google-services-mcp. Official Google remote MCP: ${preset.remoteUrl}`));
+
+  if (ctx.opts.dryRun) {
+    const entry = serverFromConnectorPreset(preset.id, { enabled: true });
+    prompter.print(pick(ctx, "[dry-run] 将写入：", "[dry-run] would write:"));
+    prompter.print(JSON.stringify(entry, null, 2));
+    return true;
+  }
+
+  let clientId = "";
+  let clientSecret = "";
+  if (ctx.stdin.isTTY && !ctx.opts.yes) {
+    prompter.print(pick(ctx,
+      "在 Google Cloud 创建 OAuth「桌面应用」客户端，启用 Gmail / Calendar API。凭证可稍后用环境变量补。",
+      "Create a Google Cloud OAuth Desktop client with Gmail / Calendar API enabled. You can fill secrets later via env."));
+    clientId = (await prompter.ask("GOOGLE_MCP_CLIENT_ID (Enter to skip): ")).trim();
+    if (clientId) clientSecret = (await prompter.secret("GOOGLE_MCP_CLIENT_SECRET: ")).trim();
+  }
+
+  const entry = serverFromConnectorPreset(preset.id, { enabled: true });
+  const secret = {};
+  if (clientId) secret.GOOGLE_MCP_CLIENT_ID = clientId;
+  if (clientSecret) secret.GOOGLE_MCP_CLIENT_SECRET = clientSecret;
+  await upsertViaRegistryOrHome(entry, Object.keys(secret).length ? secret : null, ctx.env);
+
+  if (!hasMcpClient()) {
+    prompter.print(pick(ctx,
+      "配置已保存。当前安装还没有 MCP 客户端运行时（见 PR #5）；合并后工具调用才会真正拉起该 server。",
+      "Config saved. This install has no MCP client runtime yet (see PR #5); tool calling starts after that lands."));
+  } else {
+    prompter.print(pick(ctx,
+      `已写入。首次授权可运行：npx -y google-services-mcp add personal`,
+      `Saved. For first-time OAuth run: npx -y google-services-mcp add personal`));
+  }
+  prompter.print(pick(ctx,
+    "发信若走聊天网关，仍应遵守 draft-then-send（见 docs/GATEWAY.md / PR #8）。详情：docs/CONNECTORS.md",
+    "Outbound mail via the chat gateway should still respect draft-then-send (docs/GATEWAY.md / PR #8). Details: docs/CONNECTORS.md"));
+  return true;
+}
+
 export async function connectWizard(ctx, prompter, wanted = null) {
   const configured = loadConfig(ctx.env).gateway?.platforms || {};
   const names = Object.keys(PLATFORMS);
@@ -213,26 +269,50 @@ export async function connectWizard(ctx, prompter, wanted = null) {
 }
 
 export async function run(ctx) {
-  const raw = (ctx.args[0] || "").toLowerCase();
-  const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
-  try {
-    if (raw === "mcp" || raw === "playwright" || raw === "browser") {
+  const raw = ctx.args[0] ? String(ctx.args[0]).toLowerCase() : null;
+  const connectorId = raw ? resolveConnectorId(raw) : null;
+
+  if (connectorId) {
+    if (ctx.args[1] === "remove" || ctx.args[1] === "off") {
+      removeServer(connectorId, ctx.env);
+      ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${connectorId}\n`);
+      return 0;
+    }
+    const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
+    try {
+      return (await connectConnector(ctx, prompter, connectorId)) ? 0 : 1;
+    } finally {
+      prompter.close();
+    }
+  }
+
+  if (raw === "mcp" || raw === "playwright" || raw === "browser") {
+    const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
+    try {
       const preset = raw === "mcp" ? (ctx.args[1] || null) : "playwright";
       if ((ctx.args[1] === "remove" || ctx.args[1] === "off") && raw === "mcp") {
-        const { removeServer } = await import("../mcp/registry.mjs");
         removeServer(ctx.args[2] || "playwright", ctx.env);
         ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${ctx.args[2] || "playwright"}\n`);
         return 0;
       }
       return (await connectMcp(ctx, prompter, preset)) ? 0 : 1;
+    } finally {
+      prompter.close();
     }
-    const wanted = ctx.args[0] ? platformName(ctx.args[0]) : null;
-    if (ctx.args[0] && !wanted) throw new KarmenError("gw.unknownPlatform", { name: ctx.args[0] });
-    if (ctx.args[1] === "remove" || ctx.args[1] === "off") {
-      removePlatform(ctx.env, wanted);
-      ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${wanted}\n`);
-      return 0;
-    }
+  }
+
+  const wanted = raw ? platformName(raw) : null;
+  if (raw && !wanted) {
+    const known = listConnectorPresets().map((item) => item.id).concat(listConnectorPresets().flatMap((item) => item.aliases || []));
+    throw new KarmenError("gw.unknownPlatform", { name: `${ctx.args[0]} (chat platforms, mcp/playwright, or connectors: ${known.join(", ")})` });
+  }
+  if (wanted && (ctx.args[1] === "remove" || ctx.args[1] === "off")) {
+    removePlatform(ctx.env, wanted);
+    ctx.stdout.write(`${pick(ctx, "已移除", "Removed")} ${wanted}\n`);
+    return 0;
+  }
+  const prompter = createPrompter({ input: ctx.stdin, output: ctx.stdout, answers: ctx.io.answers });
+  try {
     return (await connectWizard(ctx, prompter, wanted)) ? 0 : 1;
   } finally {
     prompter.close();

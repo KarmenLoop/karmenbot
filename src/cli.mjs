@@ -52,7 +52,7 @@ const VALUE = {
 };
 const BOOL = {
   "-y": ["yes", true], "--yes": ["yes", true], "--moa": ["moa", true], "--no-moa": ["moa", false], "--no-splash": ["splash", false],
-  "--no-color": ["color", false], "--json": ["json", true], "-h": ["help", true], "--help": ["help", true], "--all": ["all", true],
+  "--no-color": ["color", false], "--json": ["json", true], "-h": ["help", true], "--help": ["help", true], "--all": ["all", true], "--dry-run": ["dryRun", true],
   "--check": ["check", true], "--foreground": ["foreground", true], "--new": ["new", true], "--no-memory": ["noMemory", true],
 };
 

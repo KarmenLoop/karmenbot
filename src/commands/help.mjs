@@ -28,6 +28,7 @@ const ZH = `karmenbot {version}
 聊天平台（飞书、企业微信、微信、钉钉、Telegram、Slack、Discord、WhatsApp）
   karmenbot connect [平台]          按向导接入；不写平台则列出全部
   karmenbot connect mcp|playwright  接入 MCP / Playwright 浏览器
+  karmenbot connect gmail|calendar [--dry-run]   邮件/日历 MCP 预设（写入 mcp.servers）
   karmenbot mcp list|add|remove|test|doctor|presets
   karmenbot gateway run|start|stop|status|logs   前台运行 / 后台常驻 / 停止 / 状态 / 日志
   karmenbot pair list|approve <配对码>|revoke <账号>   管理谁能和 Karmen 说话
@@ -75,6 +76,7 @@ Models
 Chat platforms (Feishu, WeCom, WeChat, DingTalk, Telegram, Slack, Discord, WhatsApp)
   karmenbot connect [platform]    guided setup; without a platform, lists them
   karmenbot connect mcp|playwright  MCP / Playwright browser tools
+  karmenbot connect gmail|calendar [--dry-run]   mail/calendar MCP presets → mcp.servers
   karmenbot mcp list|add|remove|test|doctor|presets
   karmenbot gateway run|start|stop|status|logs
   karmenbot pair list|approve <code>|revoke <account>   who may talk to Karmen
