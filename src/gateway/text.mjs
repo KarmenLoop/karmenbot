@@ -52,3 +52,13 @@ export function readChoice(text, count) {
   const value = Number(String(text ?? "").trim());
   return Number.isInteger(value) && value >= 1 && value <= count ? value - 1 : null;
 }
+
+const SEND = new Set(["send", "/send", "发送", "发出", "发出去", "发吧"]);
+
+/** Draft-then-send confirm: approve words plus send/发送. */
+export function readSendVerdict(text) {
+  const word = String(text ?? "").trim().toLowerCase().replace(/[。.!！]+$/, "");
+  if (SEND.has(word)) return "approve";
+  return readVerdict(text);
+}
+

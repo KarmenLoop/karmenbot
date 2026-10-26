@@ -7,7 +7,7 @@ import { openAgent } from "../src/agent.mjs";
 import { createGateway } from "../src/gateway/core.mjs";
 import { createPairing } from "../src/gateway/pairing.mjs";
 import { decodeFrame, encodeFrame, headerOf } from "../src/gateway/proto.mjs";
-import { chunkText, readChoice, readVerdict } from "../src/gateway/text.mjs";
+import { chunkText, readChoice, readVerdict, readSendVerdict } from "../src/gateway/text.mjs";
 import { createT } from "../src/i18n.mjs";
 import { until } from "./vt.mjs";
 
@@ -30,6 +30,9 @@ test("only exact approve / deny words count as a verdict", () => {
   for (const word of ["好的我看看再说", "ok but change the name", "", "批准吧但是先等等"]) assert.equal(readVerdict(word), null, word);
   assert.equal(readChoice("2", 3), 1);
   assert.equal(readChoice("4", 3), null);
+  for (const word of ["发送", "send", "/send", "发吧", "批准"]) assert.equal(readSendVerdict(word), "approve", word);
+  assert.equal(readSendVerdict("拒绝"), "deny");
+  assert.equal(readSendVerdict("发一下看看"), null);
 });
 
 test("Feishu frames survive an encode/decode round trip, including 64-bit log ids", () => {
@@ -100,7 +103,7 @@ function scripted(...steps) {
   };
 }
 
-async function gatewayFor(t, provider, { approvalTimeoutMs = 2000, approved = ["owner"] } = {}) {
+async function gatewayFor(t, provider, { approvalTimeoutMs = 2000, approved = ["owner"], draftThenSend = false } = {}) {
   const home = await fs.mkdtemp(path.join(os.tmpdir(), "kb-gw-home-"));
   const workspace = await fs.mkdtemp(path.join(os.tmpdir(), "kb-gw-ws-"));
   const env = { KARMENBOT_HOME: home };
@@ -108,7 +111,8 @@ async function gatewayFor(t, provider, { approvalTimeoutMs = 2000, approved = ["
   for (const id of approved) pairing.approve("fake", id);
   const adapter = fakeAdapter();
   const agent = await openAgent({ workspace, env, providerOverride: provider });
-  const gateway = createGateway({ agent, adapters: { fake: adapter }, pairing, t: createT("zh"), approvalTimeoutMs });
+  // Existing e2e keep immediate send; draft-then-send covered in gateway-draft.test.mjs.
+  const gateway = createGateway({ agent, adapters: { fake: adapter }, pairing, t: createT("zh"), approvalTimeoutMs, draftThenSend });
   const running = gateway.start();
   t.after(async () => {
     await gateway.stop();

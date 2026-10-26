@@ -281,6 +281,8 @@ This is Meta’s Business Cloud API, not the personal WhatsApp app. You need a b
 
 ### Gateway and pairing
 
+Assistant replies from the gateway are **drafted first** by default: you see the text, then reply 「发送」/ send / 批准 to deliver, or 「拒绝」 to cancel. Turn this off with `"gateway": { "draftThenSend": false }` in `~/.karmenbot/config.json`. See [GATEWAY.md](./GATEWAY.md).
+
 Settings → **Gateway** → **Start**. The page then says running and shows a process id. Turn on **Start at login** if it should come back after a reboot.
 
 - macOS: a launchd login item. No window. To stay up overnight, turn off sleep in System Settings → Battery or Energy.
