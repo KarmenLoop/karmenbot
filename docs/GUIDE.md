@@ -283,6 +283,10 @@ This is Meta’s Business Cloud API, not the personal WhatsApp app. You need a b
 
 One-shot flows: `karmenbot flow steps.json`. To run a flow or prompt on a schedule, use **routines**: `karmenbot routine add …`, then wire `karmenbot routine tick` into crontab / launchd / systemd (`karmenbot routine install` prints snippets). Headless runs require `--allow-unattended` (safer default skips otherwise). See [ROUTINES.md](./ROUTINES.md).
 
+### Mail and calendar connectors
+
+Non-chat Gmail / Google Calendar access is configured as MCP presets: `karmenbot connect gmail` or `connect calendar`. Entries land in `mcp.servers[]` (same shape as Wave1 MCP). See [CONNECTORS.md](./CONNECTORS.md).
+
 ### Gateway and pairing
 
 Assistant replies from the gateway are **drafted first** by default: you see the text, then reply 「发送」/ send / 批准 to deliver, or 「拒绝」 to cancel. Turn this off with `"gateway": { "draftThenSend": false }` in `~/.karmenbot/config.json`. See [GATEWAY.md](./GATEWAY.md).
