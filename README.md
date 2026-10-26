@@ -1,86 +1,131 @@
 # karmenbot
 
-English | [简体中文](README.zh-CN.md)
+[English](README.md) · [中文](README.zh-CN.md) · **v0.1.1**
 
-karmenbot is KARMEN's full-screen terminal assistant. Open it in a folder, connect a model, and describe the work. It shows file changes and commands for approval before carrying them out.
+[![Release](https://img.shields.io/github/v/release/KarmenLoop/karmenbot)](https://github.com/KarmenLoop/karmenbot/releases/latest)
+[![Node 22+](https://img.shields.io/badge/node-22%2B-brightgreen)](https://nodejs.org/)
+[![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue)](LICENSE)
+[![Status: local terminal](https://img.shields.io/badge/status-local%20terminal-64748b)](#is--is-not)
 
-[Quick start](#quick-start) · [Platforms](#platforms) · [Docs](#docs) · [Contributing](#contributing) · [License](#license) · [Contact](#contact)
+**A full-screen terminal assistant on your computer: open a folder, connect your own model, describe the work—and approve every file write and command before it runs.**
 
-The source here is [GPL-3.0-only](LICENSE), with the linking exception described below. The Koder kernel is proprietary, ships as a separate release asset, and is not included in this repository. See [License](#license).
+karmenbot is the KARMEN full-screen terminal in the [Koder](https://github.com/KarmenLoop/koder-cli) family. It reads and organizes material in the workspace you opened, shows diffs and exact command lines for confirmation, and can optionally stay reachable from chat apps through a local background gateway. The Koder kernel that executes agent work ships as a **separate release asset** (not in this source tree).
+
+Built and maintained by [KarmenLoop](https://github.com/KarmenLoop) / [KARMENLOOP](https://karmenloop.com). Current release: **[v0.1.1](https://github.com/KarmenLoop/karmenbot/releases/tag/v0.1.1)**. Repository license: **GPL-3.0-only** with a [kernel linking exception](LICENSE-EXCEPTION.md).
 
 ![Opening screen](docs/media/01-splash.png)
 
-## What it is
+[Download v0.1.1](https://github.com/KarmenLoop/karmenbot/releases/tag/v0.1.1) · [Tutorial (EN)](docs/tutorial.en.md) · [中文教程](docs/tutorial.zh-CN.md) · [Setup guide](docs/GUIDE.md) · [Screen / TUI](docs/TUI.md) · [Product](https://karmenloop.com/karmen-bot.html)
 
-Use it for work in the folder you opened: reading code, reviewing a diff, making edits, or running commands. You can ask several configured models for input before one of them carries out the task. Chat app connections are optional and use a background process on your computer.
+---
 
-The [setup guide](docs/GUIDE.md) walks through installation, model setup, and your first saved file.
+## Why this exists
 
-This terminal app is separate from the KARMEN BOT mobile app, which is not available for download. Payments, orders, and commitments still require your decision.
+Coding and everyday file work on a laptop still needs a clear approval boundary: models propose changes; people decide what lands on disk. Cloud “agents” blur that line. Phone bots are not a substitute for a workspace you can see.
 
-## What it does
+karmenbot keeps the loop local and explicit:
 
-- **The screen.** A glass-ring open, then the session, the conversation, and a line to type on. Arrows or the mouse. `/settings` is the whole setup.
-- **Read or write.** `karmenbot ask` only reads. `karmenbot run` can edit, and it still waits for `y`. `review` writes up the diff. `fix` reruns your check. `test` adds tests in the style already in the folder.
-- **Memory, flows, CI.** `karmenbot memory` keeps notes for this folder. `karmenbot flow` runs a JSON list of steps. `karmenbot ci init` adds a pull-request review workflow.
-- **Editors.** Zed, Neovim, and Emacs can talk to `karmenbot acp`. `karmenbot editor` prints the snippet.
-- **The folder.** It can read on its own. A write shows the diff. A command shows the exact line. `y` accepts, `n` or `Esc` sends it back.
-- **A model you bring.** Pick the provider, paste the key, test it. The key stays in `~/.karmenbot`, mode 600. Dots on screen, not the key.
-- **A few models on one job.** They each take a look. One of them combines that and actually does the work. Off unless you turn it on.
-- **Chat apps, if you want them.** Scan a code for Feishu, WeCom, DingTalk, and personal WeChat. A short form for Telegram, Slack, Discord, and WhatsApp Business. First contact from anyone else needs your approval on this computer.
-- **A background process.** Start it when chat should keep working after you close the window. Start-at-login is a switch, not a separate installer.
-- **MCP and browser tools.** `karmenbot connect playwright` and other MCP presets; mail/calendar connectors stay Path B with the same approve flow.
-- **Memory that stays local.** Folder notes plus optional profile / journal under `~/.karmenbot`; injection never echoes secrets.
-- **Skills / playbooks.** Install a pack (`skill install ./examples/skills/daily-brief`), scan it, run steps that still ask before shell or writes.
-- **Draft-then-send on chat.** Gateway replies show as a draft first; edit with `改` / `edit`, then send — or deny.
-- **Routines.** `karmenbot routine` / `cron` for scheduled flows; follow-ups via `gateway followup`.
-- **Voice (optional).** OS TTS (including Windows System.Speech) and BYOK speech-to-text.
-- **The site, from inside the app.** [karmenloop.com](https://karmenloop.com), the updates page, and a version check. The check does not send your key or your files.
+- your folder, your model key, your `y` / `n`;
+- optional chat reachability without giving strangers a free pass;
+- a kernel download that is checksum-verified from the official release.
+
+It does **not** replace Koder CLI/TUI for headless scripting APIs, invent payment authority, or ship the phone app (still not downloadable).
+
+---
+
+## Snapshot
+
+| | |
+|---|---|
+| **What you run** | Full-screen terminal UI + CLI (`karmenbot`) on macOS, Windows, Linux |
+| **Version** | **0.1.1** (`package.json`, release tag) |
+| **Runtime** | Node.js **22+** (installer can place a private copy) |
+| **Kernel** | Separately licensed Koder kernel from [releases](https://github.com/KarmenLoop/karmenbot/releases/latest) → `vendor/` |
+| **Config / secrets** | `~/.karmenbot` (Windows: `%USERPROFILE%\.karmenbot`), secrets mode `600` |
+| **Default gateway workspace** | `~/karmenbot-workspace` (Windows: `%USERPROFILE%\karmenbot-workspace`) |
+| **Installers** | `install.sh` · `install.ps1` · `install.cmd` on the latest release |
+| **License** | GPL-3.0-only (+ [LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md) / [KERNEL-LICENSE.md](KERNEL-LICENSE.md)) |
+
+---
+
+## Is / Is not
+
+| Is | Is not |
+|---|---|
+| Local full-screen terminal assistant with approve-before-write | Cloud-hosted coding agent SaaS |
+| BYOK models (keys stay under `~/.karmenbot`) | A bundled model or free inference quota |
+| Optional chat connectors + local gateway | Always-on public bot anyone can drive |
+| Checksum-verified installer + separate kernel asset | Kernel source in this repository |
+| Sibling to [koder-cli](https://github.com/KarmenLoop/koder-cli) / [koder-tui](https://github.com/KarmenLoop/koder-tui) | The KARMEN BOT mobile app (not downloadable yet) |
+| Human approval for writes, commands, pairings, and payments | Authority to spend money or submit orders for you |
+
+---
+
+## What you can do
+
+- Open a workspace session: read freely; show diffs / command text before `y`.
+- One-shot jobs without the UI: `karmenbot "…"`, pipes, `--yes` / `--json` when you choose.
+- Configure providers in Settings (`/settings`); paste keys as dots; **Save and test**.
+- Optional Mixture of Agents (MoA): reference models propose, one combiner acts.
+- Optional chat: Feishu / WeCom / DingTalk / personal WeChat (QR), plus Telegram / Slack / Discord / WhatsApp Business (forms).
+- Local gateway with draft-then-send replies, pairing codes, start-at-login.
+- Workspace memory, skills/playbooks, MCP presets (e.g. Playwright), routines/cron, optional voice.
+- Editors via `karmenbot acp` (Zed, Neovim, Emacs snippets from `karmenbot editor`).
+
+Deep walks: [docs/GUIDE.md](docs/GUIDE.md) · Chinese OS chapters [macOS](docs/教程-macOS.md) / [Windows](docs/教程-Windows.md) / [Linux](docs/教程-Linux.md) · topic notes [MEMORY](docs/MEMORY.md) · [SKILLS](docs/SKILLS.md) · [MCP](docs/MCP.md) · [GATEWAY](docs/GATEWAY.md) · [ROUTINES](docs/ROUTINES.md) · [CONNECTORS](docs/CONNECTORS.md) · [FOLLOWUPS](docs/FOLLOWUPS.md) · [VOICE](docs/VOICE.md).
+
+---
 
 ## Platforms
 
-macOS 12 or later, Intel or Apple silicon. Windows 10 and 11, in Windows Terminal, PowerShell, or CMD. Linux with glibc 2.28 or later, including Ubuntu 20.04 and newer. No admin password on macOS or Linux.
+| System | Supported |
+|---|---|
+| macOS 12+, Intel or Apple silicon | Yes — no admin password |
+| Windows 10 / 11 (Windows Terminal, PowerShell, CMD) | Yes |
+| Linux with glibc **2.28+** (e.g. Ubuntu 20.04+) | Yes — no `sudo` for install |
+| Windows 7 / 8 / XP | No (Node.js 22) |
+| Older glibc / Alpine musl without system Node 22 | Installer stops or needs system Node first |
 
-Windows 7, Windows 8, and XP cannot install it. Node.js 22 does not run there.
+---
 
 ## Quick start
 
-### Install
+### Install (recommended)
 
-macOS and Linux:
+**macOS / Linux**
 
 ```bash
 curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.sh | sh
 ```
 
-Windows PowerShell:
+**Windows PowerShell**
 
 ```powershell
 irm https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.ps1 | iex
 ```
 
-Windows CMD:
+**Windows CMD**
 
 ```bat
 curl -fsSL https://github.com/KarmenLoop/karmenbot/releases/latest/download/install.cmd -o %TEMP%\karmenbot-install.cmd && %TEMP%\karmenbot-install.cmd
 ```
 
-Downloads are public and do not need the desktop beta invite cookie. The installer checks the app and kernel archives against the release manifest. If Node.js 22 is not there, it installs a private copy.
+Downloads are public (no desktop-beta cookie). Archives and the kernel are checked against the release manifest (SHA-256). Missing Node.js 22 → private copy.
 
-When it finishes, Settings opens. Open a new terminal window so `PATH` is current, then:
+Open a **new** terminal so `PATH` refreshes, then:
 
 ```bash
 karmenbot --version
 karmenbot
 ```
 
-In Settings, open **Models**, add a provider, paste the key, and choose **Save and test**. Green means you are done with setup. Type a job. When the diff shows up, press `y`.
+In Settings → **Models**, add a provider, paste the key, **Save and test**. Green connection → type a small job → press `y` on the diff.
 
-For the full walkthrough, including chat app setup, see [docs/GUIDE.md](docs/GUIDE.md).
+Cross-platform walkthrough: [docs/tutorial.en.md](docs/tutorial.en.md) · [docs/tutorial.zh-CN.md](docs/tutorial.zh-CN.md).
 
-### From source
+### From this source tree
 
-For people changing this repo. You still need the kernel from the official GitHub release. It is not in the clone.
+You still need the official kernel asset (not in the clone):
 
 ```bash
 git clone https://github.com/KarmenLoop/karmenbot.git
@@ -90,38 +135,65 @@ npm test
 node bin/karmenbot.mjs
 ```
 
-Node.js 22 or newer. No npm packages to install.
+Node.js **22+**. No npm package dependencies to install for the app itself. `npm run test:source` checks public adapters without a kernel; full `npm test` needs a verified kernel under `vendor/`.
 
-`npm run test:source` checks the public protocol adapters and export boundaries without a kernel. The full `npm test` suite also needs a verified kernel in `vendor/`. A failed kernel download is an installation failure; passing the source checks does not make that installation usable.
+---
 
-## Docs
+## Documentation map
 
-| | |
+| Doc | Use it when you need… |
 |---|---|
-| [Setup guide](docs/GUIDE.md) | Install, the model, the first saved file, then each chat app |
-| [The screen](docs/TUI.md) | What you are looking at, keys, screenshots |
-| [macOS](docs/教程-macOS.md) · [Windows](docs/教程-Windows.md) · [Linux](docs/教程-Linux.md) | The same path, in Chinese, with that system’s keys |
-| [Updates](https://karmenloop.com/updates.html) | What shipped |
-| [Product](https://karmenloop.com/karmen-bot.html) | KARMEN BOT on the site |
+| [Tutorial EN](docs/tutorial.en.md) · [中文](docs/tutorial.zh-CN.md) | Install → first approved write → update / uninstall (all OS) |
+| [GUIDE.md](docs/GUIDE.md) | Long English setup including every chat app |
+| [TUI.md](docs/TUI.md) | Screen regions, keys, screenshots |
+| [教程.md](docs/教程.md) → [macOS](docs/教程-macOS.md) / [Windows](docs/教程-Windows.md) / [Linux](docs/教程-Linux.md) | Deep Chinese OS chapters (`karmenbot learn` / `karmenbot 教程`) |
+| Topic docs | Memory, skills, MCP, gateway, routines, connectors, follow-ups, voice |
+| [Updates](https://karmenloop.com/updates.html) · [Download](https://karmenloop.com/download.html) | What shipped / installers |
 
-Inside the app, `karmenbot learn` prints the Chinese chapters for the system you are on.
+---
 
-## Contributing
+## FAQ
 
-Issues and pull requests are welcome. A change to this repository is under GPL-3.0-only, plus the kernel exception in [LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md).
+### What is karmenbot, in one sentence?
 
-Please don’t paste API keys, bot tokens, or pairing codes into an issue. Mail [info@karmenloop.com](mailto:info@karmenloop.com) if it is a security report.
+A local full-screen terminal assistant that uses your model and folder, and asks before every write and shell command.
 
-Kernel development source stays in private repositories. The runtime ships separately under its own license.
+### How is it different from Koder CLI?
 
-## License
+[koder-cli](https://github.com/KarmenLoop/koder-cli) is the command-line / scripting surface; [koder-tui](https://github.com/KarmenLoop/koder-tui) is another terminal UI packaging; **karmenbot** is the KARMEN-branded full-screen assistant with Settings, chat gateway, and consumer-oriented installers. Same family, different entry.
 
-Copyright © 2026 KARMEN. The files in this repository are under the GNU General Public License v3.0 only. The text is [LICENSE](LICENSE).
+### Where do API keys live?
 
-[LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md) lets you ship this code together with the closed Koder kernel. The kernel’s own terms are [KERNEL-LICENSE.md](KERNEL-LICENSE.md): fine to use with karmenbot, including commercially; not fine to ship on its own, modify, or reverse engineer. The kernel is not licensed under GPL, and it is not in this repository.
+Under `~/.karmenbot` (Windows: `%USERPROFILE%\.karmenbot`), typically `secrets.json` with mode `600`. The UI shows dots / last-four only.
 
-Other attributions are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). That file is the list. This readme does not add to it.
+### Do chat apps work without the gateway?
 
-## Contact
+No. Credentials alone are not enough—start the local gateway (`karmenbot gateway start` or Settings → Gateway). Pairing approval happens on **this** computer.
 
-[GitHub](https://github.com/KarmenLoop/karmenbot) · [info@karmenloop.com](mailto:info@karmenloop.com) · [karmenloop.com](https://karmenloop.com)
+### Is the kernel open source?
+
+No. Kernel runtime is separate under [KERNEL-LICENSE.md](KERNEL-LICENSE.md). This repository’s application sources are GPL-3.0-only with the linking exception.
+
+### Soft discoverability
+
+Phrases that match this repo: **local terminal AI assistant approve before write**, **BYOK coding agent TUI**, **Feishu WeCom DingTalk Telegram gateway**, **Mixture of Agents MoA terminal**, **Koder kernel karmenbot**. Substance lives in the installers and docs—not keyword density.
+
+---
+
+## Contributing and security
+
+Issues and pull requests are welcome. Changes to this repository remain under GPL-3.0-only plus [LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md).
+
+Do **not** paste API keys, bot tokens, or pairing codes into issues. Security reports: [info@karmenloop.com](mailto:info@karmenloop.com).
+
+---
+
+## License and contact
+
+[GPL-3.0-only](LICENSE) · [LICENSE-EXCEPTION.md](LICENSE-EXCEPTION.md) · [KERNEL-LICENSE.md](KERNEL-LICENSE.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+
+Maintainer: [KarmenLoop](https://github.com/KarmenLoop) · Site: [karmenloop.com](https://karmenloop.com) · Product: [karmen-bot](https://karmenloop.com/karmen-bot.html)
+
+Related (separate scope / license): [koder-cli](https://github.com/KarmenLoop/koder-cli) · [koder-tui](https://github.com/KarmenLoop/koder-tui) · [koder-sdk](https://github.com/KarmenLoop/koder-sdk) · [karmen-memory](https://github.com/KarmenLoop/karmen-memory) · [org home](https://github.com/KarmenLoop/KarmenLoop)
+
+Copyright © 2026 KARMEN / KarmenLoop.
